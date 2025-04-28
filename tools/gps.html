@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام تحديد المواقع العالمي - MapMetric</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* General Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Tajawal', 'Roboto', sans-serif;
+            color: #333;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3 {
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 10px 15px;
+            background: linear-gradient(45deg, #00ff87, #60efff);
+            color: #1a1a1a;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            transition: transform 0.3s ease;
+            font-size: 14px;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Content Styles */
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            color: #2c3e50;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #eee;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1.2em;
+        }
+
+        .tool-image {
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+            margin: 20px auto;
+            display: block;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .section-content {
+            line-height: 1.6;
+            color: #444;
+            font-size: 1em;
+        }
+
+        /* Excel-like Table Styles */
+        .excel-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            font-size: 0.9em;
+        }
+
+        .excel-table th {
+            background: #f8f9fa;
+            color: #2c3e50;
+            font-weight: 600;
+            padding: 8px;
+            text-align: right;
+            border: 1px solid #dee2e6;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        .excel-table td {
+            padding: 8px;
+            border: 1px solid #dee2e6;
+            color: #444;
+            text-align: right;
+        }
+
+        .excel-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .excel-table tr:hover {
+            background-color: #f1f3f5;
+        }
+
+        /* Steps Styles */
+        .steps {
+            counter-reset: step;
+            margin: 15px 0;
+        }
+
+        .step {
+            position: relative;
+            padding: 12px;
+            margin-bottom: 12px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-right: 4px solid #00ff87;
+        }
+
+        .step:before {
+            counter-increment: step;
+            content: counter(step);
+            position: absolute;
+            right: 0;
+            top: 0;
+            background: #00ff87;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        /* Highlight Boxes */
+        .highlight-box {
+            padding: 12px;
+            margin: 12px 0;
+            border-radius: 5px;
+            background: #f8f9fa;
+            border-right: 4px solid #60efff;
+        }
+
+        .highlight-box-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+
+        ul {
+            padding-right: 15px;
+        }
+
+        li {
+            margin-bottom: 6px;
+            font-size: 0.95em;
+        }
+
+        /* Responsive Design */
+        @media (min-width: 768px) {
+            .container {
+                max-width: 1200px;
+                margin: 20px auto;
+                padding: 30px;
+                border-radius: 15px;
+                min-height: auto;
+            }
+
+            .section {
+                margin-bottom: 40px;
+                padding: 20px;
+            }
+
+            .section-title {
+                font-size: 1.4em;
+            }
+
+            .section-content {
+                font-size: 1.1em;
+            }
+
+            .excel-table {
+                font-size: 1em;
+            }
+
+            .excel-table th, .excel-table td {
+                padding: 12px;
+            }
+
+            .step {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+
+            .back-button {
+                padding: 10px 20px;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-button">
+            <i class="fas fa-arrow-right"></i> العودة للصفحة الرئيسية
+        </a>
+        <h1>نظام تحديد المواقع العالمي</h1>
+        <img src="../images/gps.jpg" alt="نظام تحديد المواقع العالمي" class="tool-image">
+
+        <div class="section">
+            <h2 class="section-title">🟨 أولاً: ما هو الـ GPS في المساحة؟</h2>
+            <div class="section-content">
+                <p>GPS هو اختصار لـ Global Positioning System، وهو نظام عالمي يستخدم الأقمار الصناعية لتحديد موقع أي نقطة على سطح الأرض عن طريق الإحداثيات:</p>
+                <ul>
+                    <li>خط الطول (Longitude)</li>
+                    <li>خط العرض (Latitude)</li>
+                    <li>الارتفاع (Elevation أو Altitude)</li>
+                </ul>
+                <p>وفي المساحة، نستخدم أجهزة GPS متخصصة (ليست نفس دقة الهاتف) للحصول على مواقع دقيقة تصل إلى السنتيمتر أو حتى المليمتر عند استخدام تقنيات متقدمة زي RTK.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🟦 ثانيًا: مكونات نظام GPS</h2>
+            <table class="excel-table">
+                <thead>
+                    <tr>
+                        <th>المكون</th>
+                        <th>الوصف</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>الأقمار الصناعية (Satellites)</td>
+                        <td>تبث إشارات مستمرة لتحديد الموقع الزمني والمكاني</td>
+                    </tr>
+                    <tr>
+                        <td>وحدة الاستقبال (Receiver)</td>
+                        <td>تستقبل الإشارات من عدة أقمار وتحسب الموقع</td>
+                    </tr>
+                    <tr>
+                        <td>وحدة المعالجة</td>
+                        <td>لحساب الإحداثيات بدقة ومعالجتها</td>
+                    </tr>
+                    <tr>
+                        <td>الهوائي (Antenna)</td>
+                        <td>يُركّب على نقطة القياس لاستقبال أفضل للإشارة</td>
+                    </tr>
+                    <tr>
+                        <td>وحدة تخزين</td>
+                        <td>لحفظ القراءات وإخراجها بصيغ CAD أو GIS أو Excel</td>
+                    </tr>
+                    <tr>
+                        <td>بطارية / طاقة</td>
+                        <td>لتشغيل النظام في الميدان</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🟩 ثالثًا: طريقة عمل GPS</h2>
+            <div class="section-content">
+                <ul>
+                    <li>جهاز الاستقبال يتصل بأربع أقمار صناعية أو أكثر</li>
+                    <li>يتم قياس زمن انتقال الإشارة من القمر إلى الجهاز</li>
+                    <li>تُحسب المسافة بين الجهاز وكل قمر</li>
+                    <li>باستخدام الرياضيات، يُحدد مكان النقطة بدقة ثلاثية الأبعاد (X, Y, Z)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🛠️ رابعًا: خطوات استخدام GPS عمليًا في المساحة</h2>
+            <div class="steps">
+                <div class="step">
+                    <h3>1. الإعداد:</h3>
+                    <ul>
+                        <li>افتح الجهاز وانتظر حتى يتصل بعدد كافٍ من الأقمار (4 على الأقل)</li>
+                        <li>اختَر نظام الإحداثيات المستخدم (مثل UTM أو WGS 84)</li>
+                        <li>حدد طريقة العمل: قياس نقطة – توقيع – تتبع مسار...</li>
+                    </ul>
+                </div>
+                <div class="step">
+                    <h3>2. القياس:</h3>
+                    <ul>
+                        <li>ثبت الهوائي على الشاخص أو حامل ثلاثي</li>
+                        <li>وجّه الجهاز نحو السماء بعيدًا عن المباني</li>
+                        <li>سجل إحداثيات النقطة المطلوبة</li>
+                        <li>يمكن تكرار القراءة أكثر من مرة للحصول على متوسط دقيق</li>
+                    </ul>
+                </div>
+                <div class="step">
+                    <h3>3. التخزين والنقل:</h3>
+                    <ul>
+                        <li>احفظ البيانات على ذاكرة داخلية أو فلاش</li>
+                        <li>انقل البيانات إلى الحاسوب لعرضها على الخرائط</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">📚 خامسًا: المصطلحات الأساسية في GPS</h2>
+            <table class="excel-table">
+                <thead>
+                    <tr>
+                        <th>المصطلح</th>
+                        <th>الشرح</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Epoch</td>
+                        <td>اللحظة الزمنية للقراءة</td>
+                    </tr>
+                    <tr>
+                        <td>Fix Solution</td>
+                        <td>الإشارة المستقرة التي تحدد الإحداثيات بدقة</td>
+                    </tr>
+                    <tr>
+                        <td>PDOP</td>
+                        <td>مقياس لجودة توزيع الأقمار – كلما كان أقل كلما كانت الدقة أعلى</td>
+                    </tr>
+                    <tr>
+                        <td>WGS 84</td>
+                        <td>نظام الإحداثيات العالمي الأكثر استخدامًا</td>
+                    </tr>
+                    <tr>
+                        <td>Differential GPS</td>
+                        <td>تصحيح القراءات من خلال محطة مرجعية للحصول على نتائج أدق</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🔍 سادسًا: دقة GPS في المساحة</h2>
+            <table class="excel-table">
+                <thead>
+                    <tr>
+                        <th>نوع الجهاز</th>
+                        <th>الدقة التقريبية</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>GPS عادي (هاتف – سيارة)</td>
+                        <td>±5 إلى ±10 متر</td>
+                    </tr>
+                    <tr>
+                        <td>GPS مساحي تقليدي</td>
+                        <td>±1 إلى ±3 متر</td>
+                    </tr>
+                    <tr>
+                        <td>GPS دقيق (مع DGPS أو RTK)</td>
+                        <td>±1 إلى ±2 سنتيمتر</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🟥 سابعًا: المميزات والعيوب</h2>
+            <div class="section-content">
+                <h3>✅ المميزات:</h3>
+                <ul>
+                    <li>سرعة في تحديد الموقع</li>
+                    <li>يمكن العمل بمفردك بدون فريق</li>
+                    <li>مفيد في المناطق الكبيرة والصعبة</li>
+                    <li>حفظ البيانات إلكترونيًا وربطها بـGIS</li>
+                </ul>
+                <h3>❌ العيوب:</h3>
+                <ul>
+                    <li>يتأثر بالأبنية العالية والأشجار الكثيفة</li>
+                    <li>الدقة تقل في الظروف الجوية السيئة</li>
+                    <li>يحتاج معايرة عند العمل مع خرائط مساحية دقيقة</li>
+                    <li>أغلى من الأجهزة التقليدية</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">✅ ثامنًا: جدول التلخيص الشامل – GPS</h2>
+            <table class="excel-table">
+                <thead>
+                    <tr>
+                        <th>البند</th>
+                        <th>التفاصيل</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>الوظيفة</td>
+                        <td>تحديد المواقع بدقة باستخدام الأقمار الصناعية</td>
+                    </tr>
+                    <tr>
+                        <td>الدقة</td>
+                        <td>±1 متر (تقليدي) – ±2 سم (دقيق مع RTK/DGPS)</td>
+                    </tr>
+                    <tr>
+                        <td>الاستخدامات</td>
+                        <td>رفع مساحي – توقيع – رسم حدود – نظم معلومات جغرافية</td>
+                    </tr>
+                    <tr>
+                        <td>المكونات</td>
+                        <td>جهاز استقبال – هوائي – شاشة – ذاكرة – بطارية</td>
+                    </tr>
+                    <tr>
+                        <td>أهم المصطلحات</td>
+                        <td>Epoch – Fix – PDOP – WGS84 – DGPS</td>
+                    </tr>
+                    <tr>
+                        <td>الخطوات</td>
+                        <td>تشغيل – اتصال بالأقمار – قياس – حفظ – تصدير</td>
+                    </tr>
+                    <tr>
+                        <td>المميزات</td>
+                        <td>سرعة – دقة – مناسب للمساحات الواسعة</td>
+                    </tr>
+                    <tr>
+                        <td>العيوب</td>
+                        <td>حساسية للبيئة – يحتاج تقنيات تصحيح – مرتفع الثمن</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html> 

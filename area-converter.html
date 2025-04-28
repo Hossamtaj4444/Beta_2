@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Land Area Converter - MapMetric</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #f0f2f5;
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: #1a73e8;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .back-button {
+            background: #f8f9fa;
+            border: none;
+            color: #1a73e8;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .back-button:hover {
+            background: #e8f0fe;
+        }
+
+        .converter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .converter-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e8f0fe;
+        }
+
+        .card-header h2 {
+            font-size: 18px;
+            color: #1a73e8;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #5f6368;
+            font-size: 14px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e8f0fe;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #1a73e8;
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+        }
+
+        .convert-button {
+            background: #1a73e8;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .convert-button:hover {
+            background: #1557b0;
+            transform: translateY(-2px);
+        }
+
+        .result-table {
+            margin-top: 20px;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .result-table th,
+        .result-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e8f0fe;
+        }
+
+        .result-table th {
+            font-weight: 500;
+            color: #5f6368;
+            font-size: 14px;
+        }
+
+        .result-table td {
+            font-size: 16px;
+        }
+
+        .result-table tr:last-child td {
+            border-bottom: none;
+            font-weight: 500;
+            color: #1a73e8;
+        }
+
+        .ai-features {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e8f0fe;
+        }
+
+        .feature-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #e8f0fe;
+            color: #1a73e8;
+            border-radius: 15px;
+            font-size: 12px;
+            margin: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-calculator"></i> Land Area Converter</h1>
+            <button class="back-button" onclick="window.location.href='calculations.html'">
+                <i class="fas fa-arrow-left"></i> Back to Tools
+            </button>
+        </div>
+
+        <div class="converter-grid">
+            <!-- Feddan to Square Meters -->
+            <div class="converter-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-expand-arrows-alt"></i> Feddan to Square Meters</h2>
+                </div>
+                <div class="input-group">
+                    <label>Number of Feddans</label>
+                    <input type="number" id="feddan1" min="0" placeholder="Enter feddans">
+                </div>
+                <div class="input-group">
+                    <label>Number of Qirats</label>
+                    <input type="number" id="qirat1" min="0" max="23" placeholder="Enter qirats (0-23)">
+                </div>
+                <div class="input-group">
+                    <label>Number of Sahms</label>
+                    <input type="number" id="sahm1" min="0" max="23" placeholder="Enter sahms (0-23)">
+                </div>
+                <button class="convert-button" onclick="convertToMeters()">Convert to Square Meters</button>
+                
+                <table class="result-table" id="result-table1">
+                    <thead>
+                        <tr>
+                            <th>Unit</th>
+                            <th>Number</th>
+                            <th>Area</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Feddan</td>
+                            <td>-</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>Qirat</td>
+                            <td>-</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>Sahm</td>
+                            <td>-</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>Total</td>
+                            <td></td>
+                            <td>-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Square Meters to Feddan -->
+            <div class="converter-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-compress-arrows-alt"></i> Square Meters to Feddan</h2>
+                </div>
+                <div class="input-group">
+                    <label>Area in Square Meters</label>
+                    <input type="number" id="meters2" min="0" placeholder="Enter square meters">
+                </div>
+                <button class="convert-button" onclick="convertToFeddan()">Convert to Feddan</button>
+                
+                <table class="result-table" id="result-table2">
+                    <thead>
+                        <tr>
+                            <th>Unit</th>
+                            <th>Number</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Feddan</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>Qirat</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>Sahm</td>
+                            <td>-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Constants
+        const FEDDAN_TO_M2 = 4200.00;
+        const QIRAT_TO_M2 = 175.00;
+        const SAHM_TO_M2 = 7.29;
+
+        function convertToMeters() {
+            const feddan = parseFloat(document.getElementById('feddan1').value) || 0;
+            const qirat = parseFloat(document.getElementById('qirat1').value) || 0;
+            const sahm = parseFloat(document.getElementById('sahm1').value) || 0;
+
+            // Validate inputs
+            if (qirat >= 24 || sahm >= 24) {
+                alert('Qirats and Sahms must be less than 24');
+                return;
+            }
+
+            // Calculate areas
+            const feddanArea = feddan * FEDDAN_TO_M2;
+            const qiratArea = qirat * QIRAT_TO_M2;
+            const sahmArea = sahm * SAHM_TO_M2;
+            const totalArea = feddanArea + qiratArea + sahmArea;
+
+            // Update table
+            const table = document.getElementById('result-table1');
+            table.rows[1].cells[1].textContent = feddan;
+            table.rows[1].cells[2].textContent = feddanArea.toFixed(2) + ' m²';
+            table.rows[2].cells[1].textContent = qirat;
+            table.rows[2].cells[2].textContent = qiratArea.toFixed(2) + ' m²';
+            table.rows[3].cells[1].textContent = sahm;
+            table.rows[3].cells[2].textContent = sahmArea.toFixed(2) + ' m²';
+            table.rows[4].cells[2].textContent = totalArea.toFixed(2) + ' m²';
+        }
+
+        function convertToFeddan() {
+            const totalM2 = parseFloat(document.getElementById('meters2').value) || 0;
+
+            // Calculate units
+            let remaining = totalM2;
+            const feddan = Math.floor(remaining / FEDDAN_TO_M2);
+            remaining = remaining % FEDDAN_TO_M2;
+            
+            const qirat = Math.floor(remaining / QIRAT_TO_M2);
+            remaining = remaining % QIRAT_TO_M2;
+            
+            const sahm = Math.round(remaining / SAHM_TO_M2 * 100) / 100;
+
+            // Update table
+            const table = document.getElementById('result-table2');
+            table.rows[1].cells[1].textContent = feddan;
+            table.rows[2].cells[1].textContent = qirat;
+            table.rows[3].cells[1].textContent = sahm;
+        }
+    </script>
+</body>
+</html> 

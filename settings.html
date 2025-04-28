@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - MapMetric</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #202124;
+            --card-bg: #303134;
+            --text: #ffffff;
+            --primary: #4834d4;
+            --secondary: #6c5ce7;
+            --accent: #00cec9;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--text);
+            background: var(--bg-dark);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .settings-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .settings-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .settings-header h1 {
+            font-size: 24px;
+            color: var(--text);
+        }
+
+        .settings-header i {
+            font-size: 24px;
+            color: var(--accent);
+        }
+
+        .settings-group {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .settings-group h2 {
+            color: var(--accent);
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .settings-group h2 i {
+            font-size: 20px;
+        }
+
+        .language-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .language-selector i {
+            font-size: 18px;
+            color: var(--accent);
+        }
+
+        .language-selector select {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text);
+            padding: 10px;
+            border-radius: 6px;
+            width: 200px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .language-selector select option {
+            background: var(--card-bg);
+            color: var(--text);
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text);
+            border-radius: 6px;
+            text-decoration: none;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .back-button i {
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-button">
+        <i class="fas fa-arrow-left"></i>
+        Back to Home
+    </a>
+
+    <div class="settings-container">
+        <div class="settings-header">
+            <i class="fas fa-cog"></i>
+            <h1>Settings</h1>
+        </div>
+
+        <div class="settings-group">
+            <h2>
+                <i class="fas fa-globe"></i>
+                Language Settings
+            </h2>
+            <div class="language-selector">
+                <i class="fas fa-language"></i>
+                <select id="language-select" onchange="changeLanguage(this.value)">
+                    <option value="en">English</option>
+                    <option value="ar">العربية</option>
+                    <option value="es">Español</option>
+                    <option value="fr">Français</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function changeLanguage(lang) {
+            // Implement language change functionality
+            console.log('Language changed to:', lang);
+            // You can add your language change logic here
+        }
+    </script>
+</body>
+</html> 

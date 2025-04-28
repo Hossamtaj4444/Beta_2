@@ -1,0 +1,1705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MapMetric - Exams</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3a86ff;
+            --secondary-color: #8338ec;
+            --accent-color: #ff006e;
+            --background-color: #f8f9fa;
+            --text-color: #2b2d42;
+            --card-background: #ffffff;
+            --shadow-color: rgba(0, 0, 0, 0.08);
+            --success-color: #06d6a0;
+            --warning-color: #ffd60a;
+            --error-color: #ef476f;
+            --border-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --gradient-primary: linear-gradient(135deg, #3a86ff 0%, #8338ec 100%);
+            --gradient-accent: linear-gradient(135deg, #ff006e 0%, #ffbe0b 100%);
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #4cc9f0;
+            --secondary-color: #f72585;
+            --accent-color: #7209b7;
+            --background-color: #0a0a0a;
+            --text-color: #f8f9fa;
+            --card-background: #1a1a1a;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --gradient-primary: linear-gradient(135deg, #4cc9f0 0%, #f72585 100%);
+            --gradient-accent: linear-gradient(135deg, #7209b7 0%, #3a0ca3 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: var(--transition);
+            padding-bottom: 70px;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(58, 134, 255, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(131, 56, 236, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 50% 50%, rgba(255, 0, 110, 0.03) 0%, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        [data-theme="dark"] body {
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(76, 201, 240, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(247, 37, 133, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 50% 50%, rgba(114, 9, 183, 0.05) 0%, transparent 50%);
+        }
+
+        /* Mobile App Header */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 15px;
+            box-shadow: 0 2px 10px var(--shadow-color);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        [data-theme="dark"] .app-header {
+            background: rgba(26, 26, 26, 0.8);
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Main Content */
+        .app-content {
+            margin-top: 60px;
+            padding: 15px;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            box-shadow: 0 -2px 10px var(--shadow-color);
+            z-index: 1000;
+        }
+
+        [data-theme="dark"] .bottom-nav {
+            background: rgba(26, 26, 26, 0.8);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: var(--transition);
+            padding: 8px 16px;
+            border-radius: var(--border-radius);
+        }
+
+        .nav-item i {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+            transition: var(--transition);
+        }
+
+        .nav-item:hover {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(58, 134, 255, 0.3);
+        }
+
+        .nav-item:hover i {
+            transform: scale(1.1);
+        }
+
+        .nav-item.active {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(58, 134, 255, 0.3);
+        }
+
+        /* Responsive Design */
+        @media (min-width: 768px) {
+            .app-content {
+                max-width: 800px;
+                margin: 60px auto 0;
+                padding: 20px;
+            }
+        }
+
+        .content-card {
+            background: var(--card-background);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: 0 4px 6px var(--shadow-color);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .content-card h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .tools-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            direction: rtl;
+            background-color: white;
+            border: 1px solid #d0d0d0;
+            box-shadow: 0 0 0 1px #d0d0d0;
+        }
+
+        .tools-table th,
+        .tools-table td {
+            padding: 8px 12px;
+            text-align: right;
+            border: 1px solid #d0d0d0;
+            font-size: 14px;
+        }
+
+        .tools-table th {
+            background: #f0f0f0;
+            color: #000;
+            font-weight: 600;
+            border-bottom: 2px solid #d0d0d0;
+        }
+
+        .tools-table tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .tools-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        [data-theme="dark"] .tools-table {
+            background-color: #1a1a1a;
+            border-color: #404040;
+        }
+
+        [data-theme="dark"] .tools-table th,
+        [data-theme="dark"] .tools-table td {
+            border-color: #404040;
+            color: #ffffff;
+        }
+
+        [data-theme="dark"] .tools-table th {
+            background: #2d2d2d;
+            border-bottom-color: #404040;
+        }
+
+        [data-theme="dark"] .tools-table tr:hover {
+            background-color: #2d2d2d;
+        }
+
+        [data-theme="dark"] .tools-table tr:nth-child(even) {
+            background-color: #1f1f1f;
+        }
+
+        .nested-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nested-list li {
+            padding: 4px 0;
+            border-bottom: 1px dashed #e0e0e0;
+        }
+
+        .nested-list li:last-child {
+            border-bottom: none;
+        }
+
+        [data-theme="dark"] .nested-list li {
+            border-bottom-color: #404040;
+        }
+
+        .tools-table td ul {
+            margin: 0;
+        }
+
+        .scale-examples {
+            font-family: 'Courier New', monospace;
+            color: #0066cc;
+            font-weight: 500;
+        }
+
+        [data-theme="dark"] .scale-examples {
+            color: #4cc9f0;
+        }
+
+        .measurement-value {
+            font-family: 'Courier New', monospace;
+            color: #0066cc;
+            font-weight: 500;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        [data-theme="dark"] .measurement-value {
+            color: #4cc9f0;
+        }
+
+        .content-card h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .explanation-text {
+            text-align: right;
+            line-height: 1.6;
+        }
+
+        .scale-example {
+            font-family: 'Courier New', monospace;
+            color: #0066cc;
+            font-weight: 500;
+            padding: 2px 4px;
+            background-color: rgba(0, 102, 204, 0.1);
+            border-radius: 4px;
+        }
+
+        [data-theme="dark"] .scale-example {
+            color: #4cc9f0;
+            background-color: rgba(76, 201, 240, 0.1);
+        }
+
+        .unit-text {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: right;
+        }
+
+        .tool-name {
+            font-weight: 600;
+            text-align: right;
+            color: var(--primary-color);
+        }
+
+        .usage-text {
+            text-align: right;
+            line-height: 1.6;
+        }
+
+        [data-theme="dark"] .tool-name {
+            color: var(--primary-color);
+        }
+
+        .method-name {
+            font-weight: 600;
+            text-align: right;
+            color: var(--primary-color);
+        }
+
+        [data-theme="dark"] .method-name {
+            color: var(--primary-color);
+        }
+
+        .map-type {
+            font-weight: 600;
+            text-align: right;
+            color: var(--accent-color);
+        }
+
+        [data-theme="dark"] .map-type {
+            color: var(--accent-color);
+        }
+
+        .survey-type {
+            font-weight: 600;
+            text-align: right;
+            color: var(--primary-color);
+        }
+
+        .description-text {
+            text-align: right;
+            line-height: 1.6;
+        }
+
+        [data-theme="dark"] .survey-type {
+            color: var(--primary-color);
+        }
+
+        .tools-text {
+            text-align: right;
+            line-height: 1.6;
+        }
+
+        .accuracy-text {
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .error-type {
+            font-weight: 600;
+            text-align: right;
+            color: var(--error-color);
+        }
+
+        .definition-text {
+            text-align: right;
+            line-height: 1.6;
+        }
+
+        .example-text {
+            text-align: right;
+            line-height: 1.6;
+            color: var(--text-color);
+            opacity: 0.9;
+        }
+
+        [data-theme="dark"] .error-type {
+            color: var(--error-color);
+        }
+
+        [data-theme="dark"] .example-text {
+            color: var(--text-color);
+        }
+
+        .symbol-type {
+            font-weight: 600;
+            text-align: right;
+            color: var(--accent-color);
+        }
+
+        [data-theme="dark"] .symbol-type {
+            color: var(--accent-color);
+        }
+
+        .scale-text {
+            text-align: right;
+            font-weight: 500;
+        }
+
+        [data-theme="dark"] .scale-text {
+            color: var(--text-color);
+        }
+
+        .measurement-type {
+            font-weight: 600;
+            text-align: right;
+            color: var(--primary-color);
+        }
+
+        .traditional-tools {
+            text-align: right;
+            line-height: 1.6;
+            color: var(--text-color);
+            opacity: 0.8;
+        }
+
+        .modern-tools {
+            text-align: right;
+            line-height: 1.6;
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+
+        [data-theme="dark"] .measurement-type {
+            color: var(--primary-color);
+        }
+
+        [data-theme="dark"] .traditional-tools {
+            color: var(--text-color);
+        }
+
+        [data-theme="dark"] .modern-tools {
+            color: var(--accent-color);
+        }
+
+        .conversion-text {
+            text-align: right;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .conversion-value {
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        [data-theme="dark"] .conversion-text {
+            color: var(--text-color);
+        }
+
+        [data-theme="dark"] .conversion-value {
+            color: var(--primary-color);
+        }
+
+        .map-element {
+            font-weight: 600;
+            text-align: right;
+            color: var(--accent-color);
+        }
+
+        [data-theme="dark"] .map-element {
+            color: var(--accent-color);
+        }
+
+        .stage-number {
+            font-weight: 600;
+            text-align: right;
+            color: var(--primary-color);
+        }
+
+        .stage-description {
+            text-align: right;
+            line-height: 1.6;
+        }
+
+        [data-theme="dark"] .stage-number {
+            color: var(--primary-color);
+        }
+
+        .factor-name {
+            font-weight: 600;
+            text-align: right;
+            color: var(--primary-color);
+        }
+
+        .effect-text {
+            text-align: right;
+            line-height: 1.6;
+        }
+
+        .notes-text {
+            text-align: right;
+            line-height: 1.6;
+            color: var(--text-color);
+            opacity: 0.9;
+        }
+
+        [data-theme="dark"] .factor-name {
+            color: var(--primary-color);
+        }
+
+        [data-theme="dark"] .notes-text {
+            color: var(--text-color);
+        }
+
+        .step-number {
+            font-weight: 600;
+            text-align: right;
+            color: var(--primary-color);
+        }
+
+        .step-description {
+            text-align: right;
+            line-height: 1.6;
+        }
+
+        [data-theme="dark"] .step-number {
+            color: var(--primary-color);
+        }
+
+        .contour-element {
+            font-weight: 600;
+            text-align: right;
+            color: var(--primary-color);
+        }
+
+        .contour-description {
+            text-align: right;
+            line-height: 1.6;
+        }
+
+        [data-theme="dark"] .contour-element {
+            color: var(--primary-color);
+        }
+
+        .deviation-type {
+            font-weight: 600;
+            text-align: right;
+            color: var(--primary-color);
+        }
+
+        .deviation-definition {
+            text-align: right;
+            line-height: 1.6;
+        }
+
+        .deviation-example {
+            text-align: right;
+            line-height: 1.6;
+            color: var(--text-color);
+            opacity: 0.9;
+        }
+
+        [data-theme="dark"] .deviation-type {
+            color: var(--primary-color);
+        }
+
+        [data-theme="dark"] .deviation-example {
+            color: var(--text-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile App Header -->
+    <header class="app-header">
+        <h1 class="app-title"><span style="color: white;">Map</span><span style="color: #4834d4;">Metric</span></h1>
+    </header>
+
+    <!-- Main Content -->
+    <main class="app-content">
+        <div class="content-card" style="text-align: center; margin-bottom: 30px;">
+            <h1 style="color: var(--primary-color); font-size: 2rem; margin-bottom: 10px;">مادة المساحة والخرائط</h1>
+            <h2 style="color: var(--secondary-color); font-size: 1.5rem;">تم إكمال جميع المحتويات بنجاح</h2>
+            <p style="color: var(--text-color); margin-top: 15px;">جميع الجداول والمواد التعليمية متاحة الآن للدراسة والمراجعة</p>
+        </div>
+
+        <div class="content-card">
+            <h2>أجهزة المساحة</h2>
+            <div class="table-container">
+                <table class="tools-table">
+                    <thead>
+                        <tr>
+                            <th>اسم الجهاز</th>
+                            <th>الغرض من الجهاز</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1. فرجار المقسم</td>
+                            <td>لقياس المسافات المنحنية على الخريطة</td>
+                        </tr>
+                        <tr>
+                            <td>2. عجلة القياس</td>
+                            <td>لقياس المسافات المنحنية والمتعرجة على الطبيعة</td>
+                        </tr>
+                        <tr>
+                            <td>3. مسطرة النديڤيت</td>
+                            <td>لقياس المسافات المنحنية والمغلقة على الخريطة</td>
+                        </tr>
+                        <tr>
+                            <td>4. فرجار التناسب</td>
+                            <td>لقياس المساحات على الخريطة</td>
+                        </tr>
+                        <tr>
+                            <td>5. البانتوجراف</td>
+                            <td>جهاز لتكبير وتصغير الخرائط</td>
+                        </tr>
+                        <tr>
+                            <td>6. الأبيديا سكوب</td>
+                            <td>جهاز فوتوغرافي لتكبير وتصغير الخرائط</td>
+                        </tr>
+                        <tr>
+                            <td>7. الجنزير</td>
+                            <td>لقياس المسافات على الطبيعة</td>
+                        </tr>
+                        <tr>
+                            <td>8. شريط القياس</td>
+                            <td>لقياس المسافات على الطبيعة</td>
+                        </tr>
+                        <tr>
+                            <td>9. الأوتاد</td>
+                            <td>تعين وتثبيت نقط المضلعات والمثلثات في الطبيعة</td>
+                        </tr>
+                        <tr>
+                            <td>10. الشواخص</td>
+                            <td>تثبت في الأرض لتسهيل العمل الميداني</td>
+                        </tr>
+                        <tr>
+                            <td>11. الشوك</td>
+                            <td>تثبت في الأرض لتسهيل العمل الميداني</td>
+                        </tr>
+                        <tr>
+                            <td>12. البانتومتر</td>
+                            <td>تعين وتثبيت الزوايا بين أضلاع الأشكال الهندسية</td>
+                        </tr>
+                        <tr>
+                            <td>13. البوصلة المنشورية</td>
+                            <td>لتعيين الانحرافات بين الشمال المغناطيسي والشمال الحقيقي</td>
+                        </tr>
+                        <tr>
+                            <td>14. اللوحة المستوية</td>
+                            <td>تُستخدم في الرفع المساحي مع الشريط والشواخص</td>
+                        </tr>
+                        <tr>
+                            <td>15. الميزان</td>
+                            <td>لحساب مناسيب الأرض الطبيعية</td>
+                        </tr>
+                        <tr>
+                            <td>16. الثيودوليت</td>
+                            <td>لقياس الزوايا الأفقية والرأسية في الرفع المساحي</td>
+                        </tr>
+                        <tr>
+                            <td>17. ستيريوسكوب</td>
+                            <td>لقراءة وتحليل الصور الجوية</td>
+                        </tr>
+                        <tr>
+                            <td>18. توتال ستيشن</td>
+                            <td>محطة رصد متكاملة</td>
+                        </tr>
+                        <tr>
+                            <td>19. جهاز G.P.S</td>
+                            <td>جهاز يتصل بالأقمار الصناعية لتحديد إحداثيات المنطقة</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h2>جدول عملي لحساب فرق المنسوب</h2>
+            <div class="table-container">
+                <table class="tools-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 15%">النقطة</th>
+                            <th style="width: 20%">منسوب مرجعي</th>
+                            <th style="width: 20%">قراءة الميزان</th>
+                            <th style="width: 20%">منسوب النقطة (RL)</th>
+                            <th style="width: 25%">الفرق في المنسوب</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="method-name">A</td>
+                            <td class="measurement-value">100.00</td>
+                            <td class="measurement-value">1.30</td>
+                            <td class="measurement-value">98.70</td>
+                            <td class="measurement-value">-1.30</td>
+                        </tr>
+                        <tr>
+                            <td class="method-name">B</td>
+                            <td class="measurement-value">100.00</td>
+                            <td class="measurement-value">0.90</td>
+                            <td class="measurement-value">99.10</td>
+                            <td class="measurement-value">-0.90</td>
+                        </tr>
+                        <tr>
+                            <td class="method-name">C</td>
+                            <td class="measurement-value">100.00</td>
+                            <td class="measurement-value">1.75</td>
+                            <td class="measurement-value">98.25</td>
+                            <td class="measurement-value">-1.75</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="notes-text" style="margin-top: 15px; text-align: right;">
+                ✍️ يستخدم لمقارنة مستويات نقاط مختلفة في الموقع بالنسبة لمستوى معلوم (مقارنة بين مناسيب).
+            </p>
+        </div>
+
+        <div class="content-card">
+            <h2>جدول مقارنة بين أنواع المساحة</h2>
+            <div class="table-container">
+                <table class="tools-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%">نوع المساحة</th>
+                            <th style="width: 20%">المقياس المستخدم</th>
+                            <th style="width: 20%">الدقة</th>
+                            <th style="width: 35%">الاستخدام الرئيسي</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="survey-type">المساحة الجيوديسية</td>
+                            <td class="scale-text">مقياس صغير</td>
+                            <td class="accuracy-text">عالية جدًا</td>
+                            <td class="usage-text">مشاريع ضخمة – المطارات – المدن الكبيرة</td>
+                        </tr>
+                        <tr>
+                            <td class="survey-type">المساحة المستوية</td>
+                            <td class="scale-text">مقياس متوسط/كبير</td>
+                            <td class="accuracy-text">متوسطة</td>
+                            <td class="usage-text">الطرق – المنشآت – المشاريع المحلية</td>
+                        </tr>
+                        <tr>
+                            <td class="survey-type">المساحة التصويرية</td>
+                            <td class="scale-text">غير مباشر</td>
+                            <td class="accuracy-text">عالية جدًا</td>
+                            <td class="usage-text">الخرائط الجوية والتحليلات الرقمية</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h2>أنواع الإنحرافات في المساحة</h2>
+            <div class="table-container">
+                <table class="tools-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%">النوع</th>
+                            <th style="width: 45%">التعريف</th>
+                            <th style="width: 30%">مثال</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="deviation-type">الانحراف الزاوي</td>
+                            <td class="deviation-definition">الزاوية بين اتجاه الضلع والشمال</td>
+                            <td class="deviation-example">يُقاس بالبوصلة أو الثيودوليت</td>
+                        </tr>
+                        <tr>
+                            <td class="deviation-type">الانحراف المغناطيسي</td>
+                            <td class="deviation-definition">الفرق بين الشمال المغناطيسي والشمال الحقيقي</td>
+                            <td class="deviation-example">يتغير حسب الموقع والزمان</td>
+                        </tr>
+                        <tr>
+                            <td class="deviation-type">الانحراف السماوي</td>
+                            <td class="deviation-definition">يُستخدم في المساحة الفلكية</td>
+                            <td class="deviation-example">يعتمد على النجوم والشمس</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h2>أساسيات خطوط الكنتور (Contour Lines)</h2>
+            <div class="table-container">
+                <table class="tools-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%">العنصر</th>
+                            <th style="width: 70%">الشرح</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="contour-element">خط الكنتور</td>
+                            <td class="contour-description">خط وهمي يصل بين نقاط ذات منسوب واحد</td>
+                        </tr>
+                        <tr>
+                            <td class="contour-element">الفرق الرأسي</td>
+                            <td class="contour-description">الفرق في الارتفاع بين خطي كنتور متتاليين</td>
+                        </tr>
+                        <tr>
+                            <td class="contour-element">المسافة الأفقية</td>
+                            <td class="contour-description">المسافة على الخريطة بين الخطين</td>
+                        </tr>
+                        <tr>
+                            <td class="contour-element">استخدامات الكنتور</td>
+                            <td class="contour-description">تمثيل التضاريس – إنشاء طرق – تحديد مواقع البناء – حساب الحجوم</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h2>خطوات حساب مساحة أرض غير منتظمة</h2>
+            <div class="table-container">
+                <table class="tools-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 20%">الخطوة</th>
+                            <th style="width: 80%">الشرح</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="step-number">1. رسم حدود الأرض</td>
+                            <td class="step-description">بالرسم الكروكي أو باستخدام جهاز اللوحة المستوية</td>
+                        </tr>
+                        <tr>
+                            <td class="step-number">2. تقسيم الأرض إلى أشكال هندسية</td>
+                            <td class="step-description">مثل مثلثات أو مستطيلات ليسهل حساب مساحتها</td>
+                        </tr>
+                        <tr>
+                            <td class="step-number">3. قياس أضلاع الأشكال</td>
+                            <td class="step-description">باستخدام شريط أو توتال ستيشن</td>
+                        </tr>
+                        <tr>
+                            <td class="step-number">4. تطبيق قوانين المساحة</td>
+                            <td class="step-description">مثل قانون هيرون أو قاعدة المثلث</td>
+                        </tr>
+                        <tr>
+                            <td class="step-number">5. جمع النتائج النهائية</td>
+                            <td class="step-description">لحساب المساحة الكلية</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h2>العوامل المؤثرة في دقة الأعمال المساحية</h2>
+            <div class="table-container">
+                <table class="tools-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%">العامل</th>
+                            <th style="width: 35%">تأثيره على الدقة</th>
+                            <th style="width: 40%">ملاحظات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="factor-name">حالة الجو</td>
+                            <td class="effect-text">حرارة – رطوبة – رياح تؤثر على الأدوات</td>
+                            <td class="notes-text">خاصة الشريط والورق</td>
+                        </tr>
+                        <tr>
+                            <td class="factor-name">نوع الأرض</td>
+                            <td class="effect-text">وعورة الأرض تؤثر على تثبيت الأدوات</td>
+                            <td class="notes-text">خاصة الجنزير والشواخص</td>
+                        </tr>
+                        <tr>
+                            <td class="factor-name">جودة الأجهزة</td>
+                            <td class="effect-text">الأجهزة الدقيقة تقلل نسبة الخطأ</td>
+                            <td class="notes-text">مثل التوتال ستيشن</td>
+                        </tr>
+                        <tr>
+                            <td class="factor-name">كفاءة القائم بالعمل</td>
+                            <td class="effect-text">الخبرة تقلل من الأخطاء البشرية</td>
+                            <td class="notes-text">التدريب مهم جدًا</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h2>مراحل العمل المساحي الميداني</h2>
+            <div class="table-container">
+                <table class="tools-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 20%">المرحلة</th>
+                            <th style="width: 80%">الشرح</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="stage-number">1. الاستكشاف</td>
+                            <td class="stage-description">التعرف على طبيعة المنطقة المراد رفعها وتحديد المعالم الرئيسية</td>
+                        </tr>
+                        <tr>
+                            <td class="stage-number">2. رسم كروكي مبدئي</td>
+                            <td class="stage-description">رسم تخطيطي يدوي يوضح شكل المنطقة ومواقع التفاصيل الهامة</td>
+                        </tr>
+                        <tr>
+                            <td class="stage-number">3. اختيار نقاط المضلع</td>
+                            <td class="stage-description">تحديد النقاط الأساسية التي سيتم القياس منها</td>
+                        </tr>
+                        <tr>
+                            <td class="stage-number">4. القياسات</td>
+                            <td class="stage-description">قياس الأطوال والزوايا والمناسيب باستخدام الأدوات المساحية</td>
+                        </tr>
+                        <tr>
+                            <td class="stage-number">5. التحشية</td>
+                            <td class="stage-description">رفع التفاصيل المحيطة بالمضلع (مباني، طرق، أشجار...)</td>
+                        </tr>
+                        <tr>
+                            <td class="stage-number">6. رسم الخريطة</td>
+                            <td class="stage-description">تمثيل البيانات على الورق أو بالحاسب لتكوين خريطة واضحة ودقيقة</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h2>العناصر الأساسية للخريطة</h2>
+            <div class="table-container">
+                <table class="tools-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50%">من → إلى</th>
+                            <th style="width: 50%">العلاقة</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="conversion-text">1 كم² → م²</td>
+                            <td class="conversion-value">× 1,000,000</td>
+                        </tr>
+                        <tr>
+                            <td class="conversion-text">1 فدان → م²</td>
+                            <td class="conversion-value">≈ 4200</td>
+                        </tr>
+                        <tr>
+                            <td class="conversion-text">1 قيراط → م²</td>
+                            <td class="conversion-value">≈ 175</td>
+                        </tr>
+                        <tr>
+                            <td class="conversion-text">1 سهم → م²</td>
+                            <td class="conversion-value">≈ 7.29</td>
+                        </tr>
+                        <tr>
+                            <td class="conversion-text">1 م² → سم²</td>
+                            <td class="conversion-value">× 10,000</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h2>مقارنة بين أدوات القياس التقليدية والحديثة</h2>
+            <div class="table-container">
+                <table class="tools-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%">النوع</th>
+                            <th style="width: 35%">الأدوات التقليدية</th>
+                            <th style="width: 40%">الأدوات الحديثة</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="measurement-type">قياس المسافات</td>
+                            <td class="traditional-tools">الجنزير – شريط القياس</td>
+                            <td class="modern-tools">Total Station – GPS</td>
+                        </tr>
+                        <tr>
+                            <td class="measurement-type">قياس الزوايا</td>
+                            <td class="traditional-tools">البوصلة – الثيودوليت</td>
+                            <td class="modern-tools">Digital Theodolite – ليزر</td>
+                        </tr>
+                        <tr>
+                            <td class="measurement-type">رفع التفاصيل</td>
+                            <td class="traditional-tools">اللوحة المستوية</td>
+                            <td class="modern-tools">تصوير جوي – LiDAR</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h2>طرق تحديد المواقع</h2>
+            <div class="table-container">
+                <table class="tools-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 20%">الطريقة</th>
+                            <th style="width: 25%">الأداة المستخدمة</th>
+                            <th style="width: 20%">مدى الدقة</th>
+                            <th style="width: 35%">أمثلة على الاستخدام</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="method-name">التثليث (Triangulation)</td>
+                            <td class="tools-text">الثيودوليت</td>
+                            <td class="accuracy-text">عالية</td>
+                            <td class="usage-text">رسم الشبكات الجيوديسية</td>
+                        </tr>
+                        <tr>
+                            <td class="method-name">الترافيرس (Traverse)</td>
+                            <td class="tools-text">البوصلة + شريط + ثيودوليت</td>
+                            <td class="accuracy-text">متوسطة إلى عالية</td>
+                            <td class="usage-text">رفع مضلعات الأراضي</td>
+                        </tr>
+                        <tr>
+                            <td class="method-name">GPS</td>
+                            <td class="tools-text">جهاز GPS</td>
+                            <td class="accuracy-text">عالية جدًا</td>
+                            <td class="usage-text">تحديد النقاط بدقة سنتيمترية</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h2>أنواع الرفع المساحي</h2>
+            <div class="table-container">
+                <table class="tools-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%">النوع</th>
+                            <th style="width: 70%">الوصف</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="survey-type">الرفع الطبوغرافي</td>
+                            <td class="description-text">يُستخدم لتمثيل سطح الأرض من ارتفاعات ومنخفضات</td>
+                        </tr>
+                        <tr>
+                            <td class="survey-type">الرفع التفصيلي</td>
+                            <td class="description-text">يُستخدم لتمثيل التفاصيل الدقيقة مثل المباني، الطرق، المنشآت</td>
+                        </tr>
+                        <tr>
+                            <td class="survey-type">الرفع الجيوديسي</td>
+                            <td class="description-text">يُستخدم في المشاريع الكبيرة ويأخذ شكل الأرض الكروي في الاعتبار</td>
+                        </tr>
+                        <tr>
+                            <td class="survey-type">الرفع بالتصوير الجوي</td>
+                            <td class="description-text">يُستخدم عبر صور جوية أو أقمار صناعية للحصول على خرائط دقيقة</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h2>أنواع الخرائط حسب الاستخدام</h2>
+            <div class="table-container">
+                <table class="tools-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%">نوع الخريطة</th>
+                            <th style="width: 70%">الاستخدامات الرئيسية</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="map-type">خرائط طبوغرافية</td>
+                            <td class="usage-text">تمثيل التضاريس وارتفاعات وانخفاضات الأرض – تُستخدم في الدراسات البيئية والهندسية</td>
+                        </tr>
+                        <tr>
+                            <td class="map-type">خرائط جيولوجية</td>
+                            <td class="usage-text">تُظهر التكوينات الصخرية والطبقات الأرضية – تُستخدم في التنقيب عن المعادن والبترول</td>
+                        </tr>
+                        <tr>
+                            <td class="map-type">خرائط زراعية</td>
+                            <td class="usage-text">تُوضح نوع المحاصيل والتربة – تُستخدم في التخطيط الزراعي</td>
+                        </tr>
+                        <tr>
+                            <td class="map-type">خرائط مناخية</td>
+                            <td class="usage-text">تُبين درجات الحرارة والأمطار – تُستخدم في الأرصاد الجوية</td>
+                        </tr>
+                        <tr>
+                            <td class="map-type">خرائط طرق ومواصلات</td>
+                            <td class="usage-text">تُظهر شبكة الطرق والسكك الحديدية – تُستخدم في النقل والتخطيط الحضري</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h2>أدوات الرسم</h2>
+            <div class="table-container">
+                <table class="tools-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%">الفئة الرئيسية</th>
+                            <th style="width: 70%">التفاصيل</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1. المساطر</td>
+                            <td>
+                                <ul class="nested-list">
+                                    <li>أ. المسطرة العادية</li>
+                                    <li>ب. مسطرة الرموز</li>
+                                    <li>ج. مسطرة الأسهم</li>
+                                    <li>د. مسطرة المتوازيات</li>
+                                    <li>هـ. مسطرة مقياس الرسم</li>
+                                    <li>و. المثلثات والمنقلة</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2. المقسم والفجار</td>
+                            <td>يُستخدم لرسم الدوائر وغيرها، وينقسم لأنواع متعددة.</td>
+                        </tr>
+                        <tr>
+                            <td>3. الأقلام</td>
+                            <td>
+                                <ul class="nested-list">
+                                    <li>أ. أقلام التخطيط (H - HB – B)</li>
+                                    <li>ب. أقلام التحبير</li>
+                                    <li>ج. أقلام الجرافوس</li>
+                                    <li>د. أقلام الألوان (ألوان خشب – ألوان زيت)</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>4. ورق الرسم</td>
+                            <td>
+                                <ul class="nested-list">
+                                    <li>الورق الأبيض</li>
+                                    <li>ورق الكلك الشفاف</li>
+                                    <li>أنواع أخرى</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>5. طاولات الرسم</td>
+                            <td>
+                                <ul class="nested-list">
+                                    <li>طاولة رسم عادية</li>
+                                    <li>طاولة رسم حديثة</li>
+                                    <li>طاولة شف الخريطة</li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h2>تصنيف الخرائط</h2>
+            <div class="table-container">
+                <table class="tools-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 20%">المقياس</th>
+                            <th style="width: 30%">النوع</th>
+                            <th style="width: 50%">أمثلة</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>كبير</td>
+                            <td>خرائط تفصيلية</td>
+                            <td class="scale-examples">1:2500، 1:5000</td>
+                        </tr>
+                        <tr>
+                            <td>متوسط</td>
+                            <td>خرائط طبوغرافية</td>
+                            <td class="scale-examples">1:25000، 1:50000</td>
+                        </tr>
+                        <tr>
+                            <td>صغير</td>
+                            <td>خرائط مليونية</td>
+                            <td class="scale-examples">1:10000000، 1:50000000</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h2>وحدات قياس المساحات</h2>
+            
+            <h3 style="text-align: right; margin: 15px 0; color: var(--primary-color);">الوحدة المصرية</h3>
+            <div class="table-container">
+                <table class="tools-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 40%">الوحدة</th>
+                            <th style="width: 60%">تعادل بالمتر المربع</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>الذراع البلدي المربع</td>
+                            <td class="measurement-value">0.3364</td>
+                        </tr>
+                        <tr>
+                            <td>الذراع المعماري المربع</td>
+                            <td class="measurement-value">0.5625</td>
+                        </tr>
+                        <tr>
+                            <td>القصبة المربعة</td>
+                            <td class="measurement-value">12.6025</td>
+                        </tr>
+                        <tr>
+                            <td>الفدان المصري</td>
+                            <td class="measurement-value">4200</td>
+                        </tr>
+                        <tr>
+                            <td>القيراط</td>
+                            <td class="measurement-value">175</td>
+                        </tr>
+                        <tr>
+                            <td>السهم</td>
+                            <td class="measurement-value">7.29</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 style="text-align: right; margin: 30px 0 15px 0; color: var(--primary-color);">الوحدة الفرنسية</h3>
+            <div class="table-container">
+                <table class="tools-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 40%">الوحدة</th>
+                            <th style="width: 60%">تعادل بالمتر المربع</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>الكيلومتر المربع</td>
+                            <td class="measurement-value">100000</td>
+                        </tr>
+                        <tr>
+                            <td>الهكتومتر المربع</td>
+                            <td class="measurement-value">10000</td>
+                        </tr>
+                        <tr>
+                            <td>الديكا متر المربع</td>
+                            <td class="measurement-value">100</td>
+                        </tr>
+                        <tr>
+                            <td>المتر المربع</td>
+                            <td class="measurement-value">1</td>
+                        </tr>
+                        <tr>
+                            <td>الديسمتر المربع</td>
+                            <td class="measurement-value">0.01</td>
+                        </tr>
+                        <tr>
+                            <td>السنتيمتر المربع</td>
+                            <td class="measurement-value">0.0001</td>
+                        </tr>
+                        <tr>
+                            <td>الملليمتر المربع</td>
+                            <td class="measurement-value">0.000001</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h2>وحدات قياس الأطوال (المتري)</h2>
+            <div class="table-container">
+                <table class="tools-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 40%">الوحدة</th>
+                            <th style="width: 60%">العلاقة</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1 كم</td>
+                            <td class="measurement-value">1000 م</td>
+                        </tr>
+                        <tr>
+                            <td>1 م</td>
+                            <td class="measurement-value">10 ديسمتر</td>
+                        </tr>
+                        <tr>
+                            <td>1 ديسمتر</td>
+                            <td class="measurement-value">10 سم</td>
+                        </tr>
+                        <tr>
+                            <td>1 سم</td>
+                            <td class="measurement-value">10 ملم</td>
+                        </tr>
+                        <tr>
+                            <td>1 كم</td>
+                            <td class="measurement-value">1000000 ملم</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h2>أنواع مقاييس الرسم</h2>
+            <h3 style="text-align: right; margin: 15px 0; color: var(--primary-color);">أولاً: المقياس العددي (الكتابي)</h3>
+            <div class="table-container">
+                <table class="tools-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%">النوع</th>
+                            <th style="width: 70%">الشرح</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>المقياس الكتابي المباشر</td>
+                            <td class="explanation-text">مثل: 1 سم على الخريطة = 1 كم على الطبيعة</td>
+                        </tr>
+                        <tr>
+                            <td>المقياس الكسري (النسبي)</td>
+                            <td class="explanation-text">يُكتب ككسر عادي مثل: <span class="scale-example">1:50000</span> ويعني 1 سم على الخريطة = 50000 سم على الطبيعة</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 style="text-align: right; margin: 30px 0 15px 0; color: var(--primary-color);">ثانياً: المقياس التخطيطي</h3>
+            <div class="table-container">
+                <table class="tools-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%">النوع</th>
+                            <th style="width: 70%">الشرح</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>المقياس الخطي البسيط</td>
+                            <td class="explanation-text">خط مدرج بوحدات متساوية يُرسم على هامش الخريطة</td>
+                        </tr>
+                        <tr>
+                            <td>المقياس الخطي المقارن</td>
+                            <td class="explanation-text">يقارن بين وحدتين مختلفتين (مثلاً: <span class="scale-example">1 بوصة = 2500 متر</span>)</td>
+                        </tr>
+                        <tr>
+                            <td>المقياس الخطي الدقيق</td>
+                            <td class="explanation-text">يحتوي على وحدات إضافية لتحديد القراءة بدقة عالية</td>
+                        </tr>
+                        <tr>
+                            <td>المقياس الشبكي (diagonal)</td>
+                            <td class="explanation-text">يُرسم على شكل شبكة خطوط لإعطاء أعلى دقة ممكنة في القراءة</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h2>أنواع الحجوم</h2>
+            <div class="table-container">
+                <table class="tools-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 40%">الوحدة</th>
+                            <th style="width: 60%">تعادل</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="unit-text">1 متر مكعب</td>
+                            <td class="measurement-value">1000 لتر</td>
+                        </tr>
+                        <tr>
+                            <td class="unit-text">1 متر مكعب</td>
+                            <td class="measurement-value">1000000 سم³</td>
+                        </tr>
+                        <tr>
+                            <td class="unit-text">1 لتر</td>
+                            <td class="measurement-value">1000 سم³</td>
+                        </tr>
+                        <tr>
+                            <td class="unit-text">1 ديسمتر مكعب</td>
+                            <td class="measurement-value">1 لتر</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h2>أدوات الرفع المساحي الميداني</h2>
+            <div class="table-container">
+                <table class="tools-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%">الأداة</th>
+                            <th style="width: 70%">الاستخدام</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="tool-name">الشواخص</td>
+                            <td class="usage-text">لتحديد المواقع على الأرض</td>
+                        </tr>
+                        <tr>
+                            <td class="tool-name">الشوك</td>
+                            <td class="usage-text">لتثبيت النقاط في الأرض</td>
+                        </tr>
+                        <tr>
+                            <td class="tool-name">الأوتاد</td>
+                            <td class="usage-text">لتحديد وتثبيت نقاط المضلعات</td>
+                        </tr>
+                        <tr>
+                            <td class="tool-name">خيط الشاغول</td>
+                            <td class="usage-text">لتحديد الخط الرأسي</td>
+                        </tr>
+                        <tr>
+                            <td class="tool-name">الشريط</td>
+                            <td class="usage-text">لقياس المسافات</td>
+                        </tr>
+                        <tr>
+                            <td class="tool-name">دفتر الغيط</td>
+                            <td class="usage-text">لتسجيل الملاحظات والمقاسات الميدانية</td>
+                        </tr>
+                        <tr>
+                            <td class="tool-name">الجنزير</td>
+                            <td class="usage-text">أداة قديمة لقياس المسافات</td>
+                        </tr>
+                        <tr>
+                            <td class="tool-name">الكلينومتر</td>
+                            <td class="usage-text">لتحديد درجة ميل السطح</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h2>أنواع المساحات حسب الهدف أو الطريقة أو الأجهزة</h2>
+            
+            <h3 style="text-align: right; margin: 15px 0; color: var(--primary-color);">حسب الطريقة:</h3>
+            <div class="table-container">
+                <table class="tools-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%">النوع</th>
+                            <th style="width: 70%">الشرح</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="method-name">مساحه المثلثات</td>
+                            <td class="explanation-text">تستخدم في ربط نقاط الشبكة</td>
+                        </tr>
+                        <tr>
+                            <td class="method-name">مساحه المضلعات</td>
+                            <td class="explanation-text">تعتمد على قياس الزوايا والأضلاع</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 style="text-align: right; margin: 30px 0 15px 0; color: var(--primary-color);">حسب الجهاز:</h3>
+            <div class="table-container">
+                <table class="tools-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%">الجهاز</th>
+                            <th style="width: 70%">الاستخدام</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="tool-name">الجنزير</td>
+                            <td class="usage-text">قياس المسافات</td>
+                        </tr>
+                        <tr>
+                            <td class="tool-name">الثيودوليت</td>
+                            <td class="usage-text">قياس الزوايا</td>
+                        </tr>
+                        <tr>
+                            <td class="tool-name">البوصلة</td>
+                            <td class="usage-text">تحديد الاتجاهات والانحرافات</td>
+                        </tr>
+                        <tr>
+                            <td class="tool-name">اللوحة المستوية</td>
+                            <td class="usage-text">رسم الخريطة مباشرة في الموقع</td>
+                        </tr>
+                        <tr>
+                            <td class="tool-name">التاكيوميتر</td>
+                            <td class="usage-text">قياس المسافات والزوايا بدقة</td>
+                        </tr>
+                        <tr>
+                            <td class="tool-name">التصويرية (Photogrammetry)</td>
+                            <td class="usage-text">تحليل الصور الجوية لعمل الخرائط</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h2>طرق توقيع النقاط في الطبيعة</h2>
+            <div class="table-container">
+                <table class="tools-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%">الطريقة</th>
+                            <th style="width: 40%">الشرح</th>
+                            <th style="width: 30%">الأدوات المستخدمة</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="method-name">توقيع بالإحداثيات</td>
+                            <td class="explanation-text">نقل النقطة من الخريطة إلى الطبيعة</td>
+                            <td class="tools-text">توتال ستيشن أو GPS</td>
+                        </tr>
+                        <tr>
+                            <td class="method-name">توقيع بالشريط والزوايا</td>
+                            <td class="explanation-text">باستخدام قياسات يدوية من نقطة معلومة</td>
+                            <td class="tools-text">شريط قياس + بوصلة أو ميزان</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h2>مقارنة بين GPS و Total Station</h2>
+            <div class="table-container">
+                <table class="tools-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%">العنصر</th>
+                            <th style="width: 35%">GPS</th>
+                            <th style="width: 35%">Total Station</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="method-name">الدقة</td>
+                            <td class="explanation-text">من متر إلى سنتيمتر</td>
+                            <td class="explanation-text">حتى المليمتر</td>
+                        </tr>
+                        <tr>
+                            <td class="method-name">الاستخدام</td>
+                            <td class="explanation-text">تحديد إحداثيات النقاط</td>
+                            <td class="explanation-text">مسافات وزوايا وتوقيع</td>
+                        </tr>
+                        <tr>
+                            <td class="method-name">يعتمد على</td>
+                            <td class="explanation-text">الأقمار الصناعية</td>
+                            <td class="explanation-text">القياس المباشر</td>
+                        </tr>
+                        <tr>
+                            <td class="method-name">السعر</td>
+                            <td class="explanation-text">أغلى في النسخ الدقيقة</td>
+                            <td class="explanation-text">أقل نسبيًا</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h2>المصطلحات المهمة في المساحة</h2>
+            <div class="table-container">
+                <table class="tools-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%">المصطلح</th>
+                            <th style="width: 70%">المعنى باختصار</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="method-name">الاستكشاف</td>
+                            <td class="explanation-text">التعرف على المنطقة قبل بدء الرفع</td>
+                        </tr>
+                        <tr>
+                            <td class="method-name">الكنتور</td>
+                            <td class="explanation-text">خط يربط نقاط ذات منسوب واحد</td>
+                        </tr>
+                        <tr>
+                            <td class="method-name">التوقيع</td>
+                            <td class="explanation-text">نقل المعلومات من الخريطة للطبيعة</td>
+                        </tr>
+                        <tr>
+                            <td class="method-name">الانحراف</td>
+                            <td class="explanation-text">الزاوية بين اتجاه الضلع والشمال</td>
+                        </tr>
+                        <tr>
+                            <td class="method-name">التحشية</td>
+                            <td class="explanation-text">رفع التفاصيل الدقيقة داخل المضلع</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h2>جدول عملي لتوقيع نقطة باستخدام الإحداثيات</h2>
+            <div class="table-container">
+                <table class="tools-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 15%">النقطة</th>
+                            <th style="width: 20%">الإحداثي X</th>
+                            <th style="width: 20%">الإحداثي Y</th>
+                            <th style="width: 30%">الأداة المستخدمة</th>
+                            <th style="width: 15%">تم التوقيع؟</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="method-name">P1</td>
+                            <td class="measurement-value">234.12</td>
+                            <td class="measurement-value">453.89</td>
+                            <td class="tools-text">GPS</td>
+                            <td class="measurement-value" style="text-align: center;">✅</td>
+                        </tr>
+                        <tr>
+                            <td class="method-name">P2</td>
+                            <td class="measurement-value">240.35</td>
+                            <td class="measurement-value">460.10</td>
+                            <td class="tools-text">Total Station</td>
+                            <td class="measurement-value" style="text-align: center;">✅</td>
+                        </tr>
+                        <tr>
+                            <td class="method-name">P3</td>
+                            <td class="measurement-value">245.90</td>
+                            <td class="measurement-value">468.00</td>
+                            <td class="tools-text">GPS + شواخص</td>
+                            <td class="measurement-value" style="text-align: center;">❌</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="project.html" class="nav-item">
+            <i class="fas fa-book"></i>
+            <span>Learn</span>
+        </a>
+        <a href="exams.html" class="nav-item active">
+            <i class="fas fa-graduation-cap"></i>
+            <span>Train</span>
+        </a>
+    </nav>
+
+    <script>
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set dark theme by default
+            document.body.setAttribute('data-theme', 'dark');
+
+            // Get current page URL
+            const currentPage = window.location.pathname.split('/').pop() || 'project.html';
+            
+            // Set active state based on current page
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                const itemHref = item.getAttribute('href');
+                if (itemHref === currentPage) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

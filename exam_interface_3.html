@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MapMetric - Exam Interface 3</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3a86ff;
+            --secondary-color: #8338ec;
+            --accent-color: #ff006e;
+            --background-color: #f8f9fa;
+            --text-color: #2b2d42;
+            --card-background: #ffffff;
+            --shadow-color: rgba(0, 0, 0, 0.08);
+            --success-color: #06d6a0;
+            --warning-color: #ffd60a;
+            --error-color: #ef476f;
+            --border-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --gradient-primary: linear-gradient(135deg, #3a86ff 0%, #8338ec 100%);
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #4cc9f0;
+            --secondary-color: #f72585;
+            --accent-color: #7209b7;
+            --background-color: #0a0a0a;
+            --text-color: #f8f9fa;
+            --card-background: #1a1a1a;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --gradient-primary: linear-gradient(135deg, #4cc9f0 0%, #f72585 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: var(--transition);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .app-header {
+            background: var(--card-background);
+            padding: 15px;
+            box-shadow: 0 2px 10px var(--shadow-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .timer {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-color);
+            padding: 8px 16px;
+            border-radius: var(--border-radius);
+            background: var(--card-background);
+            box-shadow: 0 2px 8px var(--shadow-color);
+        }
+
+        .timer.warning {
+            color: var(--warning-color);
+            animation: pulse 1s infinite;
+        }
+
+        .timer.danger {
+            color: var(--error-color);
+            animation: pulse 0.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .exam-container {
+            flex: 1;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .question-card {
+            background: var(--card-background);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px var(--shadow-color);
+        }
+
+        .question-number {
+            font-size: 0.9rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .options-container {
+            display: grid;
+            gap: 10px;
+        }
+
+        .option {
+            background: var(--card-background);
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .option:hover {
+            background: rgba(58, 134, 255, 0.1);
+        }
+
+        .option.selected {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .option.correct {
+            background: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+
+        .option.incorrect {
+            background: var(--error-color);
+            color: white;
+            border-color: var(--error-color);
+        }
+
+        .option-letter {
+            font-weight: 600;
+            min-width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(58, 134, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .option.selected .option-letter {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .nav-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--border-radius);
+            background: var(--gradient-primary);
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(58, 134, 255, 0.4);
+        }
+
+        .result-container {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .review-container {
+            display: none;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .review-question {
+            background: var(--card-background);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px var(--shadow-color);
+        }
+
+        .review-question-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .review-options {
+            display: grid;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .review-option {
+            padding: 10px;
+            border-radius: var(--border-radius);
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .review-option.incorrect {
+            background: var(--error-color);
+            color: white;
+        }
+
+        .review-option.correct {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .review-back-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--border-radius);
+            background: var(--gradient-primary);
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 20px;
+        }
+
+        .review-back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(58, 134, 255, 0.4);
+        }
+
+        .result-score {
+            font-size: 3rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin: 20px 0;
+        }
+
+        .result-message {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .result-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .result-stat {
+            background: var(--card-background);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 10px var(--shadow-color);
+        }
+
+        .result-stat-value {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .result-stat-label {
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.8;
+        }
+
+        .restart-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: var(--border-radius);
+            background: var(--gradient-primary);
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 20px;
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(58, 134, 255, 0.4);
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 3px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .welcome-screen, .thank-you-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px;
+            background: var(--card-background);
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 20px var(--shadow-color);
+            margin: 20px 0;
+        }
+
+        .welcome-title, .thank-you-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .welcome-message, .thank-you-message {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: var(--text-color);
+        }
+
+        .start-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: var(--border-radius);
+            background: var(--gradient-primary);
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1.2rem;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(58, 134, 255, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .exam-container {
+                padding: 15px;
+            }
+
+            .question-card {
+                padding: 20px;
+            }
+
+            .result-details {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .question-text.unanswered {
+            color: var(--warning-color);
+            position: relative;
+        }
+
+        .question-text.unanswered::after {
+            content: "!";
+            color: var(--error-color);
+            margin-left: 5px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <h1 class="app-title"><span class="map-part">Map</span><span class="metric-part">Metric</span> Exam 3</h1>
+        <div class="timer">20:00</div>
+    </header>
+
+    <div class="exam-container">
+        <!-- Welcome Screen -->
+        <div class="welcome-screen">
+            <h2 class="welcome-title">Welcome to MapMetric Exam 3</h2>
+            <p class="welcome-message">This exam consists of 40 multiple-choice questions. You have 30 minutes to complete it. Good luck!</p>
+            <button class="start-btn" id="startBtn">Start Exam</button>
+        </div>
+
+        <!-- Exam Content (initially hidden) -->
+        <div class="exam-content" style="display: none;">
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 0%"></div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-number">Question 1 of 40</div>
+                <div class="question-text">Loading question...</div>
+                <div class="options-container">
+                    <div class="option">
+                        <div class="option-letter">A</div>
+                        <div class="option-text">Loading option A...</div>
+                    </div>
+                    <div class="option">
+                        <div class="option-letter">B</div>
+                        <div class="option-text">Loading option B...</div>
+                    </div>
+                    <div class="option">
+                        <div class="option-letter">C</div>
+                        <div class="option-text">Loading option C...</div>
+                    </div>
+                    <div class="option">
+                        <div class="option-letter">D</div>
+                        <div class="option-text">Loading option D...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="navigation-buttons">
+                <button class="nav-btn" id="prevBtn" disabled>Previous</button>
+                <button class="nav-btn" id="nextBtn">Next</button>
+            </div>
+        </div>
+
+        <!-- Thank You Screen (initially hidden) -->
+        <div class="thank-you-screen" style="display: none;">
+            <h2 class="thank-you-title">Thank You!</h2>
+            <p class="thank-you-message">Your exam has been submitted successfully. Please wait while we process your results.</p>
+        </div>
+
+        <div class="result-container">
+            <h2>Exam Completed!</h2>
+            <div class="result-score">0/40</div>
+            <div class="result-message">Loading result message...</div>
+            <div class="result-details">
+                <div class="result-stat">
+                    <div class="result-stat-value">0</div>
+                    <div class="result-stat-label">Correct Answers</div>
+                </div>
+                <div class="result-stat">
+                    <div class="result-stat-value">0</div>
+                    <div class="result-stat-label">Incorrect Answers</div>
+                </div>
+                <div class="result-stat">
+                    <div class="result-stat-value">0%</div>
+                    <div class="result-stat-label">Score</div>
+                </div>
+                <div class="result-stat">
+                    <div class="result-stat-value">0:00</div>
+                    <div class="result-stat-label">Time Taken</div>
+                </div>
+            </div>
+            <button class="restart-btn">Restart Exam</button>
+            <button class="review-btn" style="margin-top: 20px;">Review Incorrect Answers</button>
+        </div>
+
+        <div class="review-container">
+            <h2>Review Incorrect Answers</h2>
+            <div id="reviewQuestions"></div>
+            <button class="review-back-btn" id="reviewBackBtn">Back to Results</button>
+        </div>
+    </div>
+
+    <script>
+        // Exam state
+        let currentQuestion = 0;
+        let answers = [];
+        let startTime;
+        let timerInterval;
+        let questions = []; // Will be populated with actual questions
+
+        // DOM elements
+        const welcomeScreen = document.querySelector('.welcome-screen');
+        const examContent = document.querySelector('.exam-content');
+        const thankYouScreen = document.querySelector('.thank-you-screen');
+        const startButton = document.getElementById('startBtn');
+        const timerElement = document.querySelector('.timer');
+        const questionNumberElement = document.querySelector('.question-number');
+        const questionTextElement = document.querySelector('.question-text');
+        const optionsContainer = document.querySelector('.options-container');
+        const prevButton = document.getElementById('prevBtn');
+        const nextButton = document.getElementById('nextBtn');
+        const progressFill = document.querySelector('.progress-fill');
+        const resultContainer = document.querySelector('.result-container');
+        const resultScore = document.querySelector('.result-score');
+        const resultMessage = document.querySelector('.result-message');
+        const resultDetails = document.querySelectorAll('.result-stat-value');
+        const restartButton = document.querySelector('.restart-btn');
+        const reviewContainer = document.querySelector('.review-container');
+        const reviewQuestionsContainer = document.getElementById('reviewQuestions');
+        const reviewBackBtn = document.getElementById('reviewBackBtn');
+
+        // Timer functions
+        function startTimer() {
+            let timeLeft = 30 * 60; // 30 minutes in seconds
+            startTime = Date.now();
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+                if (timeLeft <= 300) { // 5 minutes left
+                    timerElement.classList.add('warning');
+                }
+                if (timeLeft <= 60) { // 1 minute left
+                    timerElement.classList.remove('warning');
+                    timerElement.classList.add('danger');
+                }
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    submitExam();
+                }
+            }, 1000);
+        }
+
+        // Question navigation
+        function updateQuestion() {
+            const question = questions[currentQuestion];
+            questionNumberElement.textContent = `Question ${currentQuestion + 1} of 40`;
+            questionTextElement.textContent = question.text;
+            
+            // Add warning class if question is unanswered
+            questionTextElement.classList.toggle('unanswered', answers[currentQuestion] === null);
+            
+            // Update options
+            optionsContainer.innerHTML = '';
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                if (answers[currentQuestion] === index) {
+                    optionElement.classList.add('selected');
+                }
+                optionElement.innerHTML = `
+                    <div class="option-letter">${String.fromCharCode(65 + index)}</div>
+                    <div class="option-text">${option}</div>
+                `;
+                optionElement.addEventListener('click', () => selectOption(index));
+                optionsContainer.appendChild(optionElement);
+            });
+
+            // Update navigation buttons
+            prevButton.disabled = currentQuestion === 0;
+            nextButton.textContent = currentQuestion === 39 ? 'Submit' : 'Next';
+            
+            // Update progress
+            progressFill.style.width = `${((currentQuestion + 1) / 40) * 100}%`;
+        }
+
+        function selectOption(index) {
+            answers[currentQuestion] = index;
+            updateQuestion();
+        }
+
+        function goToNextQuestion() {
+            if (answers[currentQuestion] === null) {
+                alert("يرجى اختيار إجابة قبل الانتقال للسؤال التالي");
+                return;
+            }
+            if (currentQuestion < 39) {
+                currentQuestion++;
+                updateQuestion();
+            } else {
+                submitExam();
+            }
+        }
+
+        function goToPreviousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                updateQuestion();
+            }
+        }
+
+        // Exam submission
+        function submitExam() {
+            clearInterval(timerInterval);
+            
+            // Show thank you screen
+            examContent.style.display = 'none';
+            thankYouScreen.style.display = 'flex';
+            
+            // Wait for 2 seconds before showing results
+            setTimeout(() => {
+                thankYouScreen.style.display = 'none';
+                
+                const endTime = Date.now();
+                const timeTaken = Math.floor((endTime - startTime) / 1000);
+                const minutes = Math.floor(timeTaken / 60);
+                const seconds = timeTaken % 60;
+                
+                const correctAnswers = answers.reduce((count, answer, index) => {
+                    return count + (answer === questions[index].correct ? 1 : 0);
+                }, 0);
+                
+                const score = Math.round((correctAnswers / 40) * 100);
+                
+                // Update result display
+                resultScore.textContent = `${correctAnswers}/40`;
+                resultDetails[0].textContent = correctAnswers;
+                resultDetails[1].textContent = 40 - correctAnswers;
+                resultDetails[2].textContent = `${score}%`;
+                resultDetails[3].textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                // Show result message
+                if (score >= 80) {
+                    resultMessage.textContent = "Excellent! You've passed with flying colors!";
+                } else if (score >= 60) {
+                    resultMessage.textContent = "Good job! You've passed the exam.";
+                } else {
+                    resultMessage.textContent = "Keep practicing! You'll do better next time.";
+                }
+                
+                // Show result container
+                resultContainer.style.display = 'block';
+            }, 2000);
+        }
+
+        // Event listeners
+        startButton.addEventListener('click', () => {
+            welcomeScreen.style.display = 'none';
+            examContent.style.display = 'block';
+            startTimer();
+            updateQuestion();
+        });
+
+        prevButton.addEventListener('click', goToPreviousQuestion);
+        nextButton.addEventListener('click', goToNextQuestion);
+        restartButton.addEventListener('click', () => {
+            currentQuestion = 0;
+            answers = [];
+            resultContainer.style.display = 'none';
+            reviewContainer.style.display = 'none';
+            welcomeScreen.style.display = 'flex';
+        });
+
+        // Initialize exam
+        function initializeExam() {
+            questions = [
+                {
+                    text: "ما هي وحدة قياس الطول في النظام الدولي؟",
+                    options: [
+                        "اللتر",
+                        "المتر",
+                        "الكيلوغرام",
+                        "الثانية"
+                    ],
+                    correct: 1
+                },
+                {
+                    text: "كم سنتيمتر في المتر الواحد؟",
+                    options: [
+                        "10",
+                        "100",
+                        "1000",
+                        "10000"
+                    ],
+                    correct: 1
+                },
+                {
+                    text: "كم يساوي الكيلومتر بالمتر؟",
+                    options: [
+                        "100 متر",
+                        "1000 متر",
+                        "10000 متر",
+                        "1 متر"
+                    ],
+                    correct: 1
+                },
+                {
+                    text: "كم يساوي الدونم بالمتر المربع؟",
+                    options: [
+                        "10 م²",
+                        "100 م²",
+                        "1000 م²",
+                        "10000 م²"
+                    ],
+                    correct: 2
+                },
+                {
+                    text: "ما هي وحدة قياس المساحة؟",
+                    options: [
+                        "متر",
+                        "متر مربع",
+                        "متر مكعب",
+                        "كيلوغرام"
+                    ],
+                    correct: 1
+                },
+                {
+                    text: "كم تساوي القصبة الطولية بالمتر؟",
+                    options: [
+                        "0.75",
+                        "0.58",
+                        "3.55",
+                        "2.5"
+                    ],
+                    correct: 2
+                },
+                {
+                    text: "ما وحدة قياس المسافة المستخدمة في الزراعة بمصر؟",
+                    options: [
+                        "الفدان",
+                        "القيراط",
+                        "السهم",
+                        "جميع ما سبق"
+                    ],
+                    correct: 3
+                },
+                {
+                    text: "كم قيراط في الفدان؟",
+                    options: [
+                        "12",
+                        "18",
+                        "24",
+                        "24"
+                    ],
+                    correct: 2
+                },
+                {
+                    text: "أي الأشكال الآتية تُحسب مساحته باستخدام 'القاعدة × الارتفاع'؟",
+                    options: [
+                        "المثلث",
+                        "المعين",
+                        "المستطيل",
+                        "الدائرة"
+                    ],
+                    correct: 2
+                },
+                {
+                    text: "ما هو الرمز المستخدم للعدد باي (π) في حسابات الدائرة؟",
+                    options: [
+                        "2",
+                        "π",
+                        "ط",
+                        "3.14"
+                    ],
+                    correct: 2
+                },
+                {
+                    text: "كم تساوي المساحة بالمتر المربع لقطعة أرض مساحتها 2 فدان؟",
+                    options: [
+                        "8400",
+                        "7200",
+                        "8000",
+                        "840"
+                    ],
+                    correct: 0
+                },
+                {
+                    text: "كم سهم يوجد في القيراط؟",
+                    options: [
+                        "16",
+                        "12",
+                        "24",
+                        "4"
+                    ],
+                    correct: 0
+                },
+                {
+                    text: "ما هي وحدة قياس الطول الإنجليزية وتساوي 30 سم؟",
+                    options: [
+                        "الياردة",
+                        "القدم",
+                        "البوصة",
+                        "الذراع"
+                    ],
+                    correct: 1
+                },
+                {
+                    text: "إذا كانت مساحة أرض 27850 متر مربع، كم تساوي بالفدان (تقريبًا)؟",
+                    options: [
+                        "5",
+                        "6.5",
+                        "7",
+                        "8"
+                    ],
+                    correct: 2
+                },
+                {
+                    text: "ما المساحة بالمتر المربع لقطعة أرض مساحتها 3 فدان و4 قيراط؟",
+                    options: [
+                        "13440",
+                        "13776",
+                        "13800",
+                        "14000"
+                    ],
+                    correct: 1
+                },
+                {
+                    text: "إذا كان طول الحديقة 20م وعرضها 10م، ما مساحتها؟",
+                    options: [
+                        "100 م²",
+                        "200 م²",
+                        "300 م²",
+                        "400 م²"
+                    ],
+                    correct: 0
+                },
+                {
+                    text: "المساحة الكلية لمتوازي مستطيلات = ؟",
+                    options: [
+                        "الطول + العرض × الارتفاع",
+                        "2 × (الطول × العرض + الطول × الارتفاع + العرض × الارتفاع)",
+                        "الطول × العرض",
+                        "القطر × الارتفاع"
+                    ],
+                    correct: 1
+                },
+                {
+                    text: "ما هي صيغة مساحة الدائرة؟",
+                    options: [
+                        "2πنق",
+                        "π × نق²",
+                        "نق × نق",
+                        "π × القطر"
+                    ],
+                    correct: 1
+                },
+                {
+                    text: "إذا كان قطر دائرة 10م، ما نصف القطر؟",
+                    options: [
+                        "2.5",
+                        "5",
+                        "10",
+                        "20"
+                    ],
+                    correct: 1
+                },
+                {
+                    text: "ما مساحة مثلث قاعدته 12م وارتفاعه 10م؟",
+                    options: [
+                        "60",
+                        "100",
+                        "120",
+                        "240"
+                    ],
+                    correct: 0
+                },
+                {
+                    text: "وحدة قياس الحجم في النظام الدولي هي:",
+                    options: [
+                        "المتر",
+                        "المتر المكعب",
+                        "اللتر",
+                        "الكيلوغرام"
+                    ],
+                    correct: 1
+                },
+                {
+                    text: "لحساب مساحة سطح أسطوانة مغلقة يُستخدم:",
+                    options: [
+                        "2πنق² + 2πنق×ع",
+                        "πنق²",
+                        "2πنق×ع",
+                        "πنق × نق"
+                    ],
+                    correct: 0
+                },
+                {
+                    text: "مساحة المعين تُحسب بـ:",
+                    options: [
+                        "طول الضلع × الارتفاع",
+                        "نصف حاصل ضرب قطريه",
+                        "نصف المحيط",
+                        "طول الضلع × نفسه"
+                    ],
+                    correct: 1
+                },
+                {
+                    text: "إذا كان ضلع المعين 10م، فما محيطه؟",
+                    options: [
+                        "20",
+                        "30",
+                        "40",
+                        "50"
+                    ],
+                    correct: 2
+                },
+                {
+                    text: "مساحة مربع طول ضلعه 7م = ؟",
+                    options: [
+                        "49",
+                        "14",
+                        "28",
+                        "21"
+                    ],
+                    correct: 0
+                },
+                {
+                    text: "إذا كانت أرض على شكل مثلث طول قاعدتها 60م وارتفاعها 100م، كم مساحتها؟",
+                    options: [
+                        "3000",
+                        "6000",
+                        "1500",
+                        "2000"
+                    ],
+                    correct: 1
+                },
+                {
+                    text: "ما مساحة الدائرة التي نصف قطرها 10م؟ (π = 3.14)",
+                    options: [
+                        "100",
+                        "314",
+                        "157",
+                        "628"
+                    ],
+                    correct: 1
+                },
+                {
+                    text: "حديقة دائرية قطرها 85م، ما محيطها؟ (π = 3.14)",
+                    options: [
+                        "267.9",
+                        "314",
+                        "145.5",
+                        "100"
+                    ],
+                    correct: 0
+                },
+                {
+                    text: "قطعة أرض شكلها متوازي مستطيلات أبعاده 5م × 15م × 20م، ما حجمها؟",
+                    options: [
+                        "1500",
+                        "1200",
+                        "1000",
+                        "500"
+                    ],
+                    correct: 0
+                },
+                {
+                    text: "إذا كان قطر دائرة = 18م، ما المساحة؟ (نق = 9م)",
+                    options: [
+                        "254.3",
+                        "300",
+                        "452.6",
+                        "628"
+                    ],
+                    correct: 0
+                },
+                {
+                    text: "وحدة المساحة الزراعية التي تعادل 1000 متر مربع هي:",
+                    options: [
+                        "الفدان",
+                        "القيراط",
+                        "السهم",
+                        "الدونم"
+                    ],
+                    correct: 3
+                },
+                {
+                    text: "إذا كانت مساحة أرض 45000 م²، كم تعادل بالكيلومتر المربع؟",
+                    options: [
+                        "0.045",
+                        "0.45",
+                        "4.5",
+                        "0.0045"
+                    ],
+                    correct: 0
+                },
+                {
+                    text: "ما عدد الأمتار في 3.55 قصبة؟",
+                    options: [
+                        "10.65",
+                        "2.5",
+                        "1.2",
+                        "7.1"
+                    ],
+                    correct: 0
+                },
+                {
+                    text: "أي المعادلات الآتية تعطي الحجم الصحيح لمخروط دائري؟",
+                    options: [
+                        "(1/3) × π × نق² × ع",
+                        "π × نق² × ع",
+                        "نق × ع × 2",
+                        "π × نق × ع"
+                    ],
+                    correct: 0
+                },
+                {
+                    text: "نصف القطر = 8، ما محيط الدائرة؟ (π = 3.14)",
+                    options: [
+                        "50.24",
+                        "25.12",
+                        "30.14",
+                        "100"
+                    ],
+                    correct: 0
+                },
+                {
+                    text: "إذا كانت المساحة 1200 متر مربع، كم تساوي بالدونم؟",
+                    options: [
+                        "0.8",
+                        "1.2",
+                        "1.8",
+                        "12"
+                    ],
+                    correct: 1
+                },
+                {
+                    text: "إذا كان طول ضلع المعين = 11.66، ما محيطه؟",
+                    options: [
+                        "46.64",
+                        "50",
+                        "44",
+                        "40"
+                    ],
+                    correct: 0
+                },
+                {
+                    text: "مساحة المربع تساوي:",
+                    options: [
+                        "نصف حاصل ضرب القطرين",
+                        "طول الضلع × نفسه",
+                        "الطول × العرض",
+                        "نق × نق"
+                    ],
+                    correct: 1
+                },
+                {
+                    text: "حجم متوازي مستطيلات = ؟",
+                    options: [
+                        "الطول × العرض × الارتفاع",
+                        "المحيط × الارتفاع",
+                        "الطول + العرض + الارتفاع",
+                        "2 × (الطول × العرض)"
+                    ],
+                    correct: 0
+                },
+                {
+                    text: "وحدة الطول المستخدمة في القدم الإنكليزية تساوي:",
+                    options: [
+                        "10 سم",
+                        "30 سم",
+                        "50 سم",
+                        "1 م"
+                    ],
+                    correct: 1
+                }
+            ];
+            answers = new Array(40).fill(null);
+        }
+
+        // Theme toggle
+        function toggleTheme() {
+            document.body.setAttribute('data-theme', 
+                document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'
+            );
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.body.setAttribute('data-theme', 'dark');
+            }
+            initializeExam();
+        });
+
+        // Add this function after the submitExam function
+        function showReview() {
+            resultContainer.style.display = 'none';
+            reviewContainer.style.display = 'block';
+            
+            reviewQuestionsContainer.innerHTML = '';
+            
+            questions.forEach((question, index) => {
+                if (answers[index] !== question.correct) {
+                    const reviewQuestion = document.createElement('div');
+                    reviewQuestion.className = 'review-question';
+                    
+                    const questionText = document.createElement('div');
+                    questionText.className = 'review-question-text';
+                    questionText.textContent = `Question ${index + 1}: ${question.text}`;
+                    
+                    const optionsContainer = document.createElement('div');
+                    optionsContainer.className = 'review-options';
+                    
+                    question.options.forEach((option, optionIndex) => {
+                        const optionElement = document.createElement('div');
+                        optionElement.className = 'review-option';
+                        
+                        if (optionIndex === answers[index]) {
+                            optionElement.classList.add('incorrect');
+                        } else if (optionIndex === question.correct) {
+                            optionElement.classList.add('correct');
+                        }
+                        
+                        optionElement.textContent = `${String.fromCharCode(65 + optionIndex)}. ${option}`;
+                        optionsContainer.appendChild(optionElement);
+                    });
+                    
+                    reviewQuestion.appendChild(questionText);
+                    reviewQuestion.appendChild(optionsContainer);
+                    reviewQuestionsContainer.appendChild(reviewQuestion);
+                }
+            });
+        }
+
+        // Add event listener for the review button
+        document.querySelector('.review-btn').addEventListener('click', showReview);
+
+        // Add event listener for the back button
+        reviewBackBtn.addEventListener('click', () => {
+            reviewContainer.style.display = 'none';
+            resultContainer.style.display = 'block';
+        });
+    </script>
+</body>
+</html> 

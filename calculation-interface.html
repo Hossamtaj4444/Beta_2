@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>أداة حساب المناسيب</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: #f0f2f5;
+      padding: 20px;
+      color: #333;
+    }
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      padding: 30px;
+    }
+    h2 {
+      text-align: center;
+      color: #007bff;
+      margin-bottom: 10px;
+    }
+    .project-name {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .project-name input {
+      width: 60%;
+      padding: 10px;
+      font-size: 16px;
+      text-align: center;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    .controls {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .controls input, .controls button {
+      padding: 10px;
+      font-size: 16px;
+      margin: 5px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+    input[type=number] {
+      width: 70px;
+      font-size: 14px;
+    }
+    .actions {
+      text-align: center;
+      margin-top: 30px;
+    }
+    .actions button {
+      padding: 12px 20px;
+      margin: 5px;
+      font-size: 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .actions button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>طريقة  منسوب سطح الميزان   </h2>
+
+    <div class="project-name">
+      <label>اسم المشروع: </label>
+      <input type="text" id="projectName" placeholder="أدخل اسم المشروع هنا">
+    </div>
+
+    <div class="controls">
+      <label>قيمة الروبية: </label>
+      <input type="number" id="roubia" step="0.01" placeholder="أدخل قيمة الروبية">
+      <button onclick="calculate()">احسب المناسيب</button>
+    </div>
+
+    <table id="pointsTable">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>المؤخرة</th>
+          <th>المتوسطة</th>
+          <th>المقدمة</th>
+          <th>م.س.م</th>
+          <th>منسوب النقطة</th>
+          <th>الملاحظات</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+
+    <div class="actions">
+      <button onclick="printPage()">🖨️ طباعة</button>
+      <button onclick="exportToExcel()">📥 تصدير Excel</button>
+      <button onclick="exportToPDF()">📄 تصدير PDF</button>
+      <button onclick="clearAll()">🗑️ حذف الكل</button>
+    </div>
+  </div>
+
+  <script>
+    let msmValue = null;
+
+    function createRow(index, data = {}) {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${index + 1}</td>
+        <td><input type="number" step="0.01" class="moakhera" value="${data.moakhera || ''}" oninput="handleInput(this)"></td>
+        <td><input type="number" step="0.01" class="motawaseta" value="${data.motawaseta || ''}" oninput="handleInput(this)"></td>
+        <td><input type="number" step="0.01" class="moqadema" value="${data.moqadema || ''}" oninput="handleInput(this)"></td>
+        <td class="msm">${data.msm || ''}</td>
+        <td class="mansoub">${data.mansoub || ''}</td>
+        <td class="note">${data.note || ''}</td>
+      `;
+      document.getElementById("tableBody").appendChild(row);
+    }
+
+    function handleInput(input) {
+      const row = input.closest("tr");
+      const moakhera = row.querySelector(".moakhera");
+      const motawaseta = row.querySelector(".motawaseta");
+      const moqadema = row.querySelector(".moqadema");
+
+      const filled = [moakhera, motawaseta, moqadema].filter(i => i.value !== "");
+
+      if (filled.length > 1) {
+        alert("غير مسموح بأكثر من نوع قراءة في نفس الصف.");
+        input.value = "";
+        return;
+      }
+
+      const rows = document.querySelectorAll("#pointsTable tbody tr");
+      const rowIndex = [...rows].indexOf(row);
+      const lastRow = rows[rows.length - 1];
+
+      if (row === lastRow && filled.length > 0) {
+        let moakheraCount = 0;
+        let moqademaCount = 0;
+
+        rows.forEach(r => {
+          if (r.querySelector(".moakhera").value !== "") moakheraCount++;
+          if (r.querySelector(".moqadema").value !== "") moqademaCount++;
+        });
+
+        if (moakheraCount > moqademaCount) {
+          createRow(rows.length);
+        }
+      }
+
+      saveData();
+    }
+
+    function calculate() {
+      const roubia = parseFloat(document.getElementById("roubia").value);
+      if (isNaN(roubia)) return alert("يرجى إدخال قيمة الروبية.");
+
+      const rows = document.querySelectorAll("#pointsTable tbody tr");
+      msmValue = null;
+      let moakheraCount = 0, moqademaCount = 0;
+
+      rows.forEach((row, index) => {
+        const moakhera = parseFloat(row.querySelector(".moakhera").value) || null;
+        const motawaseta = parseFloat(row.querySelector(".motawaseta").value) || null;
+        const moqadema = parseFloat(row.querySelector(".moqadema").value) || null;
+
+        let currentReading = null;
+        if (moakhera !== null) { moakheraCount++; currentReading = moakhera; }
+        if (motawaseta !== null) currentReading = motawaseta;
+        if (moqadema !== null) { moqademaCount++; currentReading = moqadema; }
+
+        const msm = row.querySelector(".msm");
+        const mansoub = row.querySelector(".mansoub");
+        const note = row.querySelector(".note");
+
+        if (msmValue === null && moakhera !== null) {
+          msmValue = roubia + moakhera;
+          msm.textContent = msmValue.toFixed(2);
+          mansoub.textContent = roubia.toFixed(2);
+          note.textContent = "روبيه";
+        } else if (msmValue !== null && currentReading !== null) {
+          msm.textContent = "";
+          const mansoubVal = msmValue - currentReading;
+          mansoub.textContent = mansoubVal.toFixed(2);
+          note.textContent = `النقطة ${index + 1}`;
+        }
+      });
+
+      if (moakheraCount !== moqademaCount) {
+        alert("عدد المؤخرات لا يساوي عدد المقدمات!");
+      }
+
+      saveData();
+    }
+
+    function saveData() {
+      const rows = document.querySelectorAll("#pointsTable tbody tr");
+      const data = [];
+      rows.forEach(row => {
+        data.push({
+          moakhera: row.querySelector(".moakhera").value,
+          motawaseta: row.querySelector(".motawaseta").value,
+          moqadema: row.querySelector(".moqadema").value,
+          msm: row.querySelector(".msm").textContent,
+          mansoub: row.querySelector(".mansoub").textContent,
+          note: row.querySelector(".note").textContent
+        });
+      });
+      localStorage.setItem("levelData", JSON.stringify(data));
+      localStorage.setItem("roubia", document.getElementById("roubia").value);
+      localStorage.setItem("projectName", document.getElementById("projectName").value);
+    }
+
+    function loadData() {
+      const data = JSON.parse(localStorage.getItem("levelData")) || [];
+      document.getElementById("tableBody").innerHTML = "";
+      data.forEach((d, i) => createRow(i, d));
+      if (data.length === 0) createRow(0);
+      document.getElementById("roubia").value = localStorage.getItem("roubia") || "";
+      document.getElementById("projectName").value = localStorage.getItem("projectName") || "";
+    }
+
+    function printPage() {
+      window.print();
+    }
+
+    function exportToExcel() {
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.table_to_sheet(document.getElementById("pointsTable"));
+      XLSX.utils.book_append_sheet(wb, ws, "المناسيب");
+      XLSX.writeFile(wb, "المناسيب.xlsx");
+    }
+
+    async function exportToPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: 'landscape', format: 'a4' });
+
+      const arabicFontUrl = "https://raw.githubusercontent.com/alif-type/amiri-font/master/fonts/ttf/Amiri-Regular.ttf";
+      const fontBytes = await fetch(arabicFontUrl).then(res => res.arrayBuffer());
+
+      doc.addFileToVFS("Amiri-Regular.ttf", btoa(String.fromCharCode(...new Uint8Array(fontBytes))));
+      doc.addFont("Amiri-Regular.ttf", "Amiri", "normal");
+      doc.setFont("Amiri");
+      doc.setFontSize(16);
+
+      const projectName = document.getElementById("projectName").value || "بدون اسم مشروع";
+      doc.text(`نتائج حساب المناسيب - ${projectName}`, 280, 20, { align: "right" });
+
+      doc.autoTable({
+        html: '#pointsTable',
+        styles: { font: "Amiri", fontStyle: "normal", fontSize: 10 },
+        margin: { top: 30 },
+        theme: 'grid'
+      });
+
+      doc.save("المناسيب.pdf");
+    }
+
+    function clearAll() {
+      if (confirm("هل أنت متأكد من حذف جميع البيانات؟")) {
+        localStorage.clear();
+        document.getElementById("roubia").value = "";
+        document.getElementById("projectName").value = "";
+        document.getElementById("tableBody").innerHTML = "";
+        createRow(0);
+      }
+    }
+
+    window.onload = () => loadData();
+  </script>
+</body>
+</html>
+

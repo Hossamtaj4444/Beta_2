@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الماسح الليزري (LiDAR) - MapMetric</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* General Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Tajawal', 'Roboto', sans-serif;
+            color: #333;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3 {
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 10px 15px;
+            background: linear-gradient(45deg, #00ff87, #60efff);
+            color: #1a1a1a;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            transition: transform 0.3s ease;
+            font-size: 14px;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Content Styles */
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            color: #2c3e50;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #eee;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1.2em;
+        }
+
+        .section-content {
+            line-height: 1.6;
+            color: #444;
+            font-size: 1em;
+        }
+
+        /* Excel-like Table Styles */
+        .excel-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            font-size: 0.9em;
+        }
+
+        .excel-table th {
+            background: #f8f9fa;
+            color: #2c3e50;
+            font-weight: 600;
+            padding: 8px;
+            text-align: right;
+            border: 1px solid #dee2e6;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        .excel-table td {
+            padding: 8px;
+            border: 1px solid #dee2e6;
+            color: #444;
+            text-align: right;
+        }
+
+        .excel-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .excel-table tr:hover {
+            background-color: #f1f3f5;
+        }
+
+        /* Steps Styles */
+        .steps {
+            counter-reset: step;
+            margin: 15px 0;
+        }
+
+        .step {
+            position: relative;
+            padding: 12px;
+            margin-bottom: 12px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-right: 4px solid #00ff87;
+        }
+
+        .step:before {
+            counter-increment: step;
+            content: counter(step);
+            position: absolute;
+            right: 0;
+            top: 0;
+            background: #00ff87;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        /* Highlight Boxes */
+        .highlight-box {
+            padding: 12px;
+            margin: 12px 0;
+            border-radius: 5px;
+            background: #f8f9fa;
+            border-right: 4px solid #60efff;
+        }
+
+        .highlight-box-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+
+        ul {
+            padding-right: 15px;
+        }
+
+        li {
+            margin-bottom: 6px;
+            font-size: 0.95em;
+        }
+
+        /* Responsive Design */
+        @media (min-width: 768px) {
+            .container {
+                max-width: 1200px;
+                margin: 20px auto;
+                padding: 30px;
+                border-radius: 15px;
+                min-height: auto;
+            }
+
+            .section {
+                margin-bottom: 40px;
+                padding: 20px;
+            }
+
+            .section-title {
+                font-size: 1.4em;
+            }
+
+            .section-content {
+                font-size: 1.1em;
+            }
+
+            .excel-table {
+                font-size: 1em;
+            }
+
+            .excel-table th, .excel-table td {
+                padding: 12px;
+            }
+
+            .step {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+
+            .back-button {
+                padding: 10px 20px;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-button">
+            <i class="fas fa-arrow-right"></i> العودة للصفحة الرئيسية
+        </a>
+        <h1>الماسح الليزري (LiDAR)</h1>
+
+        <div class="section">
+            <h2 class="section-title">🟨 أولاً: ما هو جهاز LiDAR؟</h2>
+            <div class="section-content">
+                <p>LiDAR هو اختصار لـ Light Detection and Ranging، ويُعرف أيضًا بـ Laser Scanner، وهو تقنية تعتمد على:</p>
+                <ul>
+                    <li>إطلاق شعاع ليزري على الأسطح وقياس الزمن الذي يستغرقه الشعاع في الرجوع بعد ارتداده</li>
+                    <li>هذا الجهاز يُستخدم لرسم نموذج ثلاثي الأبعاد دقيق جدًا لسطح الأرض أو أي جسم (مباني – جبال – أشجار – أنفاق...)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🟦 ثانيًا: مكونات جهاز LiDAR</h2>
+            <table class="excel-table">
+                <thead>
+                    <tr>
+                        <th>المكون</th>
+                        <th>الوظيفة</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>الليزر</td>
+                        <td>يُطلق نبضات ضوئية باتجاه الهدف</td>
+                    </tr>
+                    <tr>
+                        <td>المستشعر (Sensor)</td>
+                        <td>يستقبل النبضات المنعكسة ويقيس الزمن والمسافة</td>
+                    </tr>
+                    <tr>
+                        <td>وحدة GPS</td>
+                        <td>تُحدد موقع الجهاز أثناء التشغيل بدقة</td>
+                    </tr>
+                    <tr>
+                        <td>IMU (Inertial Measurement Unit)</td>
+                        <td>تقيس ميل الجهاز وحركته أثناء المسح</td>
+                    </tr>
+                    <tr>
+                        <td>وحدة تخزين</td>
+                        <td>تسجّل ملايين النقاط (نقطة/ثانية)</td>
+                    </tr>
+                    <tr>
+                        <td>برمجيات التحليل</td>
+                        <td>تُحوّل النقاط الخام إلى خرائط ونماذج ثلاثية الأبعاد</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🟩 ثالثًا: أنواع LiDAR حسب طريقة الحمل</h2>
+            <table class="excel-table">
+                <thead>
+                    <tr>
+                        <th>النوع</th>
+                        <th>الاستخدام</th>
+                        <th>أمثلة</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Terrestrial LiDAR</td>
+                        <td>يُركب على حامل أرضي</td>
+                        <td>مسح المباني – المواقع الأثرية</td>
+                    </tr>
+                    <tr>
+                        <td>Mobile LiDAR</td>
+                        <td>يُركب على سيارة</td>
+                        <td>الطرق – السكك – الأنفاق</td>
+                    </tr>
+                    <tr>
+                        <td>Aerial LiDAR</td>
+                        <td>يُركب على طائرة أو Drone</td>
+                        <td>المناطق الواسعة – الغابات</td>
+                    </tr>
+                    <tr>
+                        <td>Handheld LiDAR</td>
+                        <td>محمول باليد</td>
+                        <td>الأماكن الضيقة – داخل المباني</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🛠️ رابعًا: خطوات استخدام LiDAR عمليًا</h2>
+            <div class="steps">
+                <div class="step">
+                    <h3>1. تجهيز الجهاز:</h3>
+                    <ul>
+                        <li>تأكد من شحن البطارية وتوصيل الـ GPS والـ IMU</li>
+                        <li>اختر موقع المسح المناسب (ثابت أو متحرك)</li>
+                    </ul>
+                </div>
+                <div class="step">
+                    <h3>2. إجراء المسح:</h3>
+                    <ul>
+                        <li>فعّل الجهاز ليبدأ إطلاق ملايين النبضات الليزرية في الثانية</li>
+                        <li>الجهاز يقوم بقياس كل نقطة في البيئة المحيطة</li>
+                        <li>يُسجَّل موقع كل نقطة بالنسبة للجهاز باستخدام GPS + IMU</li>
+                    </ul>
+                </div>
+                <div class="step">
+                    <h3>3. معالجة البيانات:</h3>
+                    <ul>
+                        <li>بعد الانتهاء، يتم تصدير البيانات إلى برنامج تحليل مثل:</li>
+                        <li>CloudCompare</li>
+                        <li>Cyclone</li>
+                        <li>ReCap</li>
+                        <li>Trimble RealWorks</li>
+                        <li>يتم تنظيف البيانات (فلترة)، وتصنيفها، وتحويلها إلى:</li>
+                        <li>نموذج ارتفاع رقمي (DEM)</li>
+                        <li>نموذج سطحي ثلاثي الأبعاد (Mesh)</li>
+                        <li>خرائط نقطية دقيقة (Point Cloud Maps)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">📚 خامسًا: مصطلحات مهمة في LiDAR</h2>
+            <table class="excel-table">
+                <thead>
+                    <tr>
+                        <th>المصطلح</th>
+                        <th>الشرح</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Point Cloud</td>
+                        <td>سحابة نقطية تحتوي على ملايين النقاط تمثل شكل الأرض أو الجسم الممسوح</td>
+                    </tr>
+                    <tr>
+                        <td>Return Signal</td>
+                        <td>الإشارة المرتدة من الجسم بعد اصطدام الليزر</td>
+                    </tr>
+                    <tr>
+                        <td>DEM</td>
+                        <td>نموذج ارتفاع رقمي – يُظهر شكل الأرض بدون عناصر اصطناعية</td>
+                    </tr>
+                    <tr>
+                        <td>Intensity</td>
+                        <td>قوة الإشارة المرتدة – تُستخدم لتمييز المواد</td>
+                    </tr>
+                    <tr>
+                        <td>Classification</td>
+                        <td>تصنيف النقاط (أرض – شجر – مباني...)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🔍 سادسًا: دقة جهاز LiDAR</h2>
+            <table class="excel-table">
+                <thead>
+                    <tr>
+                        <th>العامل</th>
+                        <th>مدى التأثير</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>نوع الجهاز</td>
+                        <td>LiDAR متطور = دقة أعلى (حتى ±2 سم)</td>
+                    </tr>
+                    <tr>
+                        <td>كثافة النقاط</td>
+                        <td>كلما زادت النقاط زادت الدقة</td>
+                    </tr>
+                    <tr>
+                        <td>طريقة التركيب</td>
+                        <td>طائرة أقل دقة من جهاز أرضي ثابت</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🟥 سابعًا: المميزات والعيوب</h2>
+            <div class="section-content">
+                <h3>✅ المميزات:</h3>
+                <ul>
+                    <li>دقة عالية جدًا (مليمترية)</li>
+                    <li>سرعة كبيرة في جمع البيانات</li>
+                    <li>يعطي نموذج ثلاثي الأبعاد واقعي للأرض والمباني</li>
+                    <li>يعمل ليلاً ونهارًا</li>
+                    <li>يخترق الغطاء النباتي ويصل للأرض</li>
+                </ul>
+                <h3>❌ العيوب:</h3>
+                <ul>
+                    <li>مكلف جدًا (من آلاف إلى مئات آلاف الدولارات)</li>
+                    <li>يحتاج أجهزة وبرامج تحليل متقدمة</li>
+                    <li>يتطلب تخزين ومعالجة بيانات ضخمة</li>
+                    <li>يتأثر أحيانًا بالضباب والمطر الكثيف</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">✅ ثامنًا: جدول التلخيص الشامل – LiDAR</h2>
+            <table class="excel-table">
+                <thead>
+                    <tr>
+                        <th>البند</th>
+                        <th>التفاصيل</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>الوظيفة</td>
+                        <td>رسم نموذج ثلاثي الأبعاد دقيق جدًا باستخدام الليزر</td>
+                    </tr>
+                    <tr>
+                        <td>الدقة</td>
+                        <td>±2 إلى ±10 سم (حسب النوع والاستخدام)</td>
+                    </tr>
+                    <tr>
+                        <td>الأنواع</td>
+                        <td>أرضي – جوي – محمول – يدوي</td>
+                    </tr>
+                    <tr>
+                        <td>المكونات</td>
+                        <td>ليزر – مستشعر – GPS – IMU – ذاكرة – برنامج معالجة</td>
+                    </tr>
+                    <tr>
+                        <td>المصطلحات المهمة</td>
+                        <td>Point Cloud – Return – DEM – Intensity – Classification</td>
+                    </tr>
+                    <tr>
+                        <td>الخطوات</td>
+                        <td>مسح → تخزين → معالجة → تصنيف → تصدير</td>
+                    </tr>
+                    <tr>
+                        <td>المميزات</td>
+                        <td>دقة – تفاصيل – سريع – يخترق الغطاء النباتي</td>
+                    </tr>
+                    <tr>
+                        <td>العيوب</td>
+                        <td>سعر – حجم بيانات – برامج متخصصة</td>
+                    </tr>
+                    <tr>
+                        <td>الاستخدامات</td>
+                        <td>الطرق – الغابات – الأنفاق – المدن الذكية – مشاريع هندسية كبرى</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html> 

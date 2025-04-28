@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MapMetric - Survey Error Analysis</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4cc9f0;
+            --secondary-color: #f72585;
+            --accent-color: #7209b7;
+            --background-color: #0a0a0a;
+            --text-color: #f8f9fa;
+            --card-background: #1a1a1a;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --success-color: #06d6a0;
+            --warning-color: #ffd60a;
+            --error-color: #ef476f;
+            --border-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --gradient-primary: linear-gradient(135deg, #4cc9f0 0%, #f72585 100%);
+            --gradient-accent: linear-gradient(135deg, #7209b7 0%, #3a0ca3 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: var(--transition);
+            padding-bottom: 70px;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(76, 201, 240, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(247, 37, 133, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 50% 50%, rgba(114, 9, 183, 0.05) 0%, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        /* Mobile App Header */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(26, 26, 26, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 15px;
+            box-shadow: 0 2px 10px var(--shadow-color);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Main Content */
+        .app-content {
+            margin-top: 60px;
+            padding: 15px;
+        }
+
+        /* Card Styles */
+        .card {
+            background: var(--card-background);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px var(--shadow-color);
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px var(--shadow-color);
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-title i {
+            font-size: 1.5rem;
+        }
+
+        /* Enhanced Error Analysis Styles */
+        .error-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .error-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .error-tab {
+            padding: 8px 15px;
+            border: none;
+            background: none;
+            color: var(--text-color);
+            cursor: pointer;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .error-tab.active {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .error-content {
+            display: none;
+        }
+
+        .error-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .error-input {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .error-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .error-group label {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .error-group input {
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            background: rgba(0, 0, 0, 0.2);
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+
+        .error-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(76, 201, 240, 0.2);
+        }
+
+        .data-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--border-radius);
+            background: var(--gradient-primary);
+            color: white;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .data-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 201, 240, 0.4);
+        }
+
+        .error-results {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .error-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: var(--border-radius);
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .error-status i {
+            font-size: 1.2rem;
+        }
+
+        .error-status.good {
+            color: var(--success-color);
+            border-left: 4px solid var(--success-color);
+        }
+
+        .error-status.warning {
+            color: var(--warning-color);
+            border-left: 4px solid var(--warning-color);
+        }
+
+        .error-status.error {
+            color: var(--error-color);
+            border-left: 4px solid var(--error-color);
+        }
+
+        .error-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .error-details p {
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* New Features */
+        .visualization-container {
+            width: 100%;
+            height: 300px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: var(--border-radius);
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .point {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px var(--primary-color);
+        }
+
+        .point-label {
+            position: absolute;
+            font-size: 0.8rem;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 2px 5px;
+            border-radius: 10px;
+            transform: translate(10px, -10px);
+            color: var(--text-color);
+        }
+
+        .export-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .export-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: var(--border-radius);
+            background: var(--gradient-primary);
+            color: white;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 201, 240, 0.4);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(26, 26, 26, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            box-shadow: 0 -2px 10px var(--shadow-color);
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: var(--transition);
+            padding: 8px 16px;
+            border-radius: var(--border-radius);
+        }
+
+        .nav-item i {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+
+        .nav-item.active {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(76, 201, 240, 0.3);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Responsive Design */
+        @media (min-width: 768px) {
+            .app-content {
+                max-width: 800px;
+                margin: 60px auto 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile App Header -->
+    <header class="app-header">
+        <h1 class="app-title"><span class="map-part">Map</span><span class="metric-part">Metric</span></h1>
+    </header>
+
+    <!-- Main Content -->
+    <main class="app-content">
+        <!-- Survey Error Analysis Card -->
+        <div class="card">
+            <h2 class="card-title">
+                <i class="fas fa-chart-line"></i>
+                Survey Error Analysis
+            </h2>
+            <div class="error-analysis">
+                <div class="error-tabs">
+                    <button class="error-tab active" onclick="switchTab('basic')">Basic Analysis</button>
+                    <button class="error-tab" onclick="switchTab('traverse')">Traverse Closure</button>
+                    <button class="error-tab" onclick="switchTab('coordinate')">Coordinate Transform</button>
+                    <button class="error-tab" onclick="switchTab('visualization')">Data Visualization</button>
+                    <button class="error-tab" onclick="switchTab('report')">Error Report</button>
+                </div>
+
+                <!-- Basic Analysis Tab -->
+                <div class="error-content active" id="basic-tab">
+                    <div class="error-input">
+                        <div class="error-group">
+                            <label>Measured Distance (m)</label>
+                            <input type="number" id="measured-distance" placeholder="Enter measured distance">
+                        </div>
+                        <div class="error-group">
+                            <label>Known Distance (m)</label>
+                            <input type="number" id="known-distance" placeholder="Enter known distance">
+                        </div>
+                        <div class="error-group">
+                            <label>Linear Tolerance (mm)</label>
+                            <input type="number" id="linear-tolerance" value="5">
+                        </div>
+                        <div class="error-group">
+                            <label>Angular Tolerance (seconds)</label>
+                            <input type="number" id="angular-tolerance" value="20">
+                        </div>
+                    </div>
+
+                    <button class="data-btn" onclick="analyzeError()">
+                        <i class="fas fa-calculator"></i> Analyze
+                    </button>
+
+                    <div class="error-results" id="error-results" style="display: none;">
+                        <div class="error-status" id="error-status">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Analysis Complete</span>
+                        </div>
+                        <div class="error-details">
+                            <p><strong>Linear Error:</strong> <span id="linear-error">0</span> mm</p>
+                            <p><strong>Error Ratio:</strong> 1:<span id="error-ratio">0</span></p>
+                            <p><strong>Acceptable Range:</strong> ±<span id="acceptable-range">0</span> mm</p>
+                            <p><strong>Recommendation:</strong> <span id="recommendation">No issues detected</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Traverse Closure Tab -->
+                <div class="error-content" id="traverse-tab">
+                    <div class="error-input">
+                        <div class="error-group">
+                            <label>Point A Easting</label>
+                            <input type="number" id="point-a-easting" placeholder="Enter easting">
+                        </div>
+                        <div class="error-group">
+                            <label>Point A Northing</label>
+                            <input type="number" id="point-a-northing" placeholder="Enter northing">
+                        </div>
+                        <div class="error-group">
+                            <label>Point B Easting</label>
+                            <input type="number" id="point-b-easting" placeholder="Enter easting">
+                        </div>
+                        <div class="error-group">
+                            <label>Point B Northing</label>
+                            <input type="number" id="point-b-northing" placeholder="Enter northing">
+                        </div>
+                        <div class="error-group">
+                            <label>Point C Easting</label>
+                            <input type="number" id="point-c-easting" placeholder="Enter easting">
+                        </div>
+                        <div class="error-group">
+                            <label>Point C Northing</label>
+                            <input type="number" id="point-c-northing" placeholder="Enter northing">
+                        </div>
+                        <div class="error-group">
+                            <label>Point D Easting</label>
+                            <input type="number" id="point-d-easting" placeholder="Enter easting">
+                        </div>
+                        <div class="error-group">
+                            <label>Point D Northing</label>
+                            <input type="number" id="point-d-northing" placeholder="Enter northing">
+                        </div>
+                    </div>
+
+                    <button class="data-btn" onclick="calculateTraverseClosure()">
+                        <i class="fas fa-calculator"></i> Calculate Closure
+                    </button>
+
+                    <div class="error-results" id="traverse-results" style="display: none;">
+                        <div class="error-status" id="traverse-status">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Closure Analysis Complete</span>
+                        </div>
+                        <div class="error-details">
+                            <p><strong>Linear Closure:</strong> <span id="linear-closure">0</span> mm</p>
+                            <p><strong>Angular Closure:</strong> <span id="angular-closure">0</span> seconds</p>
+                            <p><strong>Area:</strong> <span id="traverse-area">0</span> m²</p>
+                            <p><strong>Perimeter:</strong> <span id="traverse-perimeter">0</span> m</p>
+                            <p><strong>Recommendation:</strong> <span id="traverse-recommendation">No issues detected</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coordinate Transform Tab -->
+                <div class="error-content" id="coordinate-tab">
+                    <div class="error-input">
+                        <div class="error-group">
+                            <label>Source Easting</label>
+                            <input type="number" id="source-easting" placeholder="Enter easting">
+                        </div>
+                        <div class="error-group">
+                            <label>Source Northing</label>
+                            <input type="number" id="source-northing" placeholder="Enter northing">
+                        </div>
+                        <div class="error-group">
+                            <label>Scale Factor</label>
+                            <input type="number" id="scale-factor" value="1.0">
+                        </div>
+                        <div class="error-group">
+                            <label>Rotation (degrees)</label>
+                            <input type="number" id="rotation-angle" placeholder="Enter rotation angle">
+                        </div>
+                        <div class="error-group">
+                            <label>Translation X</label>
+                            <input type="number" id="translation-x" placeholder="Enter X translation">
+                        </div>
+                        <div class="error-group">
+                            <label>Translation Y</label>
+                            <input type="number" id="translation-y" placeholder="Enter Y translation">
+                        </div>
+                    </div>
+
+                    <button class="data-btn" onclick="transformCoordinates()">
+                        <i class="fas fa-exchange-alt"></i> Transform
+                    </button>
+
+                    <div class="error-results" id="transform-results" style="display: none;">
+                        <div class="error-status" id="transform-status">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Transformation Complete</span>
+                        </div>
+                        <div class="error-details">
+                            <p><strong>Transformed Easting:</strong> <span id="transformed-easting">0</span></p>
+                            <p><strong>Transformed Northing:</strong> <span id="transformed-northing">0</span></p>
+                            <p><strong>Transformation Error:</strong> <span id="transform-error">0</span> mm</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Visualization Tab -->
+                <div class="error-content" id="visualization-tab">
+                    <div class="visualization-container" id="point-visualization">
+                        <!-- Points will be added here dynamically -->
+                    </div>
+                    <div class="error-input">
+                        <div class="error-group">
+                            <label>Point ID</label>
+                            <input type="text" id="point-id" placeholder="e.g., TP1">
+                        </div>
+                        <div class="error-group">
+                            <label>Easting</label>
+                            <input type="number" id="new-easting" placeholder="Enter easting">
+                        </div>
+                        <div class="error-group">
+                            <label>Northing</label>
+                            <input type="number" id="new-northing" placeholder="Enter northing">
+                        </div>
+                    </div>
+                    <button class="data-btn" onclick="addPointToVisualization()">
+                        <i class="fas fa-plus"></i> Add Point
+                    </button>
+                    <button class="data-btn" onclick="clearVisualization()">
+                        <i class="fas fa-trash"></i> Clear Points
+                    </button>
+                </div>
+
+                <!-- Error Report Tab -->
+                <div class="error-content" id="report-tab">
+                    <div class="error-results">
+                        <div class="error-details">
+                            <p><strong>Date:</strong> <span id="report-date"></span></p>
+                            <p><strong>Linear Error:</strong> <span id="report-linear-error">0</span> mm</p>
+                            <p><strong>Error Ratio:</strong> 1:<span id="report-error-ratio">0</span></p>
+                            <p><strong>Linear Closure:</strong> <span id="report-linear-closure">0</span> mm</p>
+                            <p><strong>Angular Closure:</strong> <span id="report-angular-closure">0</span> seconds</p>
+                            <p><strong>Area:</strong> <span id="report-area">0</span> m²</p>
+                            <p><strong>Transformation Error:</strong> <span id="report-transform-error">0</span> mm</p>
+                        </div>
+                        <div class="export-options">
+                            <button class="export-btn" onclick="exportReport('pdf')">
+                                <i class="fas fa-file-pdf"></i> Export PDF
+                            </button>
+                            <button class="export-btn" onclick="exportReport('csv')">
+                                <i class="fas fa-file-csv"></i> Export CSV
+                            </button>
+                            <button class="export-btn" onclick="exportReport('dxf')">
+                                <i class="fas fa-file-code"></i> Export DXF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="project.html" class="nav-item">
+            <i class="fas fa-arrow-left"></i>
+            <span>Back</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </a>
+    </nav>
+
+    <script>
+        // Tab Switching
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.error-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.error-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            document.querySelector(`.error-tab[onclick="switchTab('${tabName}')"]`).classList.add('active');
+        }
+
+        // Basic Error Analysis
+        function analyzeError() {
+            const measuredDistance = parseFloat(document.getElementById('measured-distance').value);
+            const knownDistance = parseFloat(document.getElementById('known-distance').value);
+            const linearTolerance = parseFloat(document.getElementById('linear-tolerance').value);
+
+            if (isNaN(measuredDistance) || isNaN(knownDistance)) {
+                alert('Please enter valid distances');
+                return;
+            }
+
+            // Calculate linear error in millimeters
+            const linearError = Math.abs(measuredDistance - knownDistance) * 1000;
+            const errorRatio = Math.round(knownDistance / (linearError / 1000));
+            
+            // Determine status
+            const status = document.getElementById('error-status');
+            const results = document.getElementById('error-results');
+            const recommendation = document.getElementById('recommendation');
+            
+            if (linearError <= linearTolerance) {
+                status.className = 'error-status good';
+                status.innerHTML = '<i class="fas fa-check-circle"></i><span>Within Tolerance</span>';
+                recommendation.textContent = 'Measurement is acceptable. Proceed with survey.';
+            } else if (linearError <= linearTolerance * 2) {
+                status.className = 'error-status warning';
+                status.innerHTML = '<i class="fas fa-exclamation-triangle"></i><span>Warning - Close to Limit</span>';
+                recommendation.textContent = 'Consider re-measuring. Error is close to tolerance limit.';
+            } else {
+                status.className = 'error-status error';
+                status.innerHTML = '<i class="fas fa-times-circle"></i><span>Exceeds Tolerance</span>';
+                recommendation.textContent = 'Re-measure required. Error exceeds acceptable tolerance.';
+            }
+
+            // Update results
+            document.getElementById('linear-error').textContent = linearError.toFixed(1);
+            document.getElementById('error-ratio').textContent = errorRatio;
+            document.getElementById('acceptable-range').textContent = linearTolerance;
+            
+            results.style.display = 'block';
+        }
+
+        // Traverse Closure Calculation
+        function calculateTraverseClosure() {
+            // Get coordinates
+            const points = ['a', 'b', 'c', 'd'].map(letter => ({
+                easting: parseFloat(document.getElementById(`point-${letter}-easting`).value),
+                northing: parseFloat(document.getElementById(`point-${letter}-northing`).value)
+            }));
+
+            // Calculate distances and angles
+            const distances = [];
+            const angles = [];
+            for (let i = 0; i < points.length; i++) {
+                const next = (i + 1) % points.length;
+                const dx = points[next].easting - points[i].easting;
+                const dy = points[next].northing - points[i].northing;
+                distances.push(Math.sqrt(dx * dx + dy * dy));
+                angles.push(Math.atan2(dy, dx) * 180 / Math.PI);
+            }
+
+            // Calculate closure
+            const linearClosure = Math.sqrt(
+                Math.pow(points[0].easting - points[3].easting, 2) +
+                Math.pow(points[0].northing - points[3].northing, 2)
+            ) * 1000; // Convert to mm
+
+            const angularClosure = Math.abs(angles.reduce((a, b) => a + b, 0) - 360);
+            const area = calculatePolygonArea(points);
+            const perimeter = distances.reduce((a, b) => a + b, 0);
+
+            // Update results
+            document.getElementById('linear-closure').textContent = linearClosure.toFixed(1);
+            document.getElementById('angular-closure').textContent = angularClosure.toFixed(1);
+            document.getElementById('traverse-area').textContent = area.toFixed(2);
+            document.getElementById('traverse-perimeter').textContent = perimeter.toFixed(2);
+
+            // Set status
+            const status = document.getElementById('traverse-status');
+            if (linearClosure <= 5 && angularClosure <= 20) {
+                status.className = 'error-status good';
+                status.innerHTML = '<i class="fas fa-check-circle"></i><span>Closure Within Tolerance</span>';
+                document.getElementById('traverse-recommendation').textContent = 'Traverse closure is acceptable.';
+            } else {
+                status.className = 'error-status error';
+                status.innerHTML = '<i class="fas fa-times-circle"></i><span>Closure Exceeds Tolerance</span>';
+                document.getElementById('traverse-recommendation').textContent = 'Re-measure required. Closure exceeds acceptable tolerance.';
+            }
+
+            document.getElementById('traverse-results').style.display = 'block';
+        }
+
+        // Coordinate Transformation
+        function transformCoordinates() {
+            const sourceEasting = parseFloat(document.getElementById('source-easting').value);
+            const sourceNorthing = parseFloat(document.getElementById('source-northing').value);
+            const scale = parseFloat(document.getElementById('scale-factor').value);
+            const rotation = parseFloat(document.getElementById('rotation-angle').value) * Math.PI / 180;
+            const tx = parseFloat(document.getElementById('translation-x').value);
+            const ty = parseFloat(document.getElementById('translation-y').value);
+
+            // Apply transformation
+            const transformedEasting = (sourceEasting * Math.cos(rotation) - sourceNorthing * Math.sin(rotation)) * scale + tx;
+            const transformedNorthing = (sourceEasting * Math.sin(rotation) + sourceNorthing * Math.cos(rotation)) * scale + ty;
+
+            // Calculate transformation error
+            const transformError = Math.sqrt(
+                Math.pow(transformedEasting - sourceEasting, 2) +
+                Math.pow(transformedNorthing - sourceNorthing, 2)
+            ) * 1000; // Convert to mm
+
+            // Update results
+            document.getElementById('transformed-easting').textContent = transformedEasting.toFixed(3);
+            document.getElementById('transformed-northing').textContent = transformedNorthing.toFixed(3);
+            document.getElementById('transform-error').textContent = transformError.toFixed(1);
+
+            // Set status
+            const status = document.getElementById('transform-status');
+            if (transformError <= 5) {
+                status.className = 'error-status good';
+                status.innerHTML = '<i class="fas fa-check-circle"></i><span>Transformation Within Tolerance</span>';
+            } else {
+                status.className = 'error-status error';
+                status.innerHTML = '<i class="fas fa-times-circle"></i><span>Transformation Error Exceeds Tolerance</span>';
+            }
+
+            document.getElementById('transform-results').style.display = 'block';
+        }
+
+        // Data Visualization
+        let visualizationPoints = [];
+
+        function addPointToVisualization() {
+            const pointId = document.getElementById('point-id').value;
+            const easting = parseFloat(document.getElementById('new-easting').value);
+            const northing = parseFloat(document.getElementById('new-northing').value);
+
+            if (!pointId || isNaN(easting) || isNaN(northing)) {
+                alert('Please enter valid point data');
+                return;
+            }
+
+            visualizationPoints.push({ id: pointId, easting, northing });
+            updateVisualization();
+            clearInputs();
+        }
+
+        function updateVisualization() {
+            const container = document.getElementById('point-visualization');
+            container.innerHTML = '';
+
+            if (visualizationPoints.length === 0) return;
+
+            // Find min and max values for scaling
+            const eastings = visualizationPoints.map(p => p.easting);
+            const northings = visualizationPoints.map(p => p.northing);
+            const minE = Math.min(...eastings);
+            const maxE = Math.max(...eastings);
+            const minN = Math.min(...northings);
+            const maxN = Math.max(...northings);
+
+            // Add points to visualization
+            visualizationPoints.forEach(point => {
+                const pointElement = document.createElement('div');
+                pointElement.className = 'point';
+                
+                // Scale coordinates to fit container
+                const x = ((point.easting - minE) / (maxE - minE)) * 100;
+                const y = 100 - ((point.northing - minN) / (maxN - minN)) * 100;
+                
+                pointElement.style.left = `${x}%`;
+                pointElement.style.top = `${y}%`;
+
+                const label = document.createElement('div');
+                label.className = 'point-label';
+                label.textContent = point.id;
+                label.style.left = `${x}%`;
+                label.style.top = `${y}%`;
+
+                container.appendChild(pointElement);
+                container.appendChild(label);
+            });
+        }
+
+        function clearVisualization() {
+            visualizationPoints = [];
+            updateVisualization();
+        }
+
+        function clearInputs() {
+            document.getElementById('point-id').value = '';
+            document.getElementById('new-easting').value = '';
+            document.getElementById('new-northing').value = '';
+        }
+
+        // Helper function to calculate polygon area
+        function calculatePolygonArea(points) {
+            let area = 0;
+            for (let i = 0; i < points.length; i++) {
+                const next = (i + 1) % points.length;
+                area += points[i].easting * points[next].northing;
+                area -= points[i].northing * points[next].easting;
+            }
+            return Math.abs(area) / 2;
+        }
+
+        // Export Report
+        function exportReport(format) {
+            // Update report date
+            document.getElementById('report-date').textContent = new Date().toLocaleDateString();
+
+            // Copy values to report
+            document.getElementById('report-linear-error').textContent = document.getElementById('linear-error').textContent;
+            document.getElementById('report-error-ratio').textContent = document.getElementById('error-ratio').textContent;
+            document.getElementById('report-linear-closure').textContent = document.getElementById('linear-closure').textContent;
+            document.getElementById('report-angular-closure').textContent = document.getElementById('angular-closure').textContent;
+            document.getElementById('report-area').textContent = document.getElementById('traverse-area').textContent;
+            document.getElementById('report-transform-error').textContent = document.getElementById('transform-error').textContent;
+
+            // Create export content based on format
+            let content = '';
+            if (format === 'csv') {
+                content = 'Type,Value,Unit\n';
+                content += `Linear Error,${document.getElementById('report-linear-error').textContent},mm\n`;
+                content += `Error Ratio,1:${document.getElementById('report-error-ratio').textContent},\n`;
+                content += `Linear Closure,${document.getElementById('report-linear-closure').textContent},mm\n`;
+                content += `Angular Closure,${document.getElementById('report-angular-closure').textContent},seconds\n`;
+                content += `Area,${document.getElementById('report-area').textContent},m²\n`;
+                content += `Transformation Error,${document.getElementById('report-transform-error').textContent},mm\n`;
+            } else if (format === 'pdf') {
+                alert('PDF export would be implemented with a PDF generation library');
+                return;
+            } else if (format === 'dxf') {
+                alert('DXF export would be implemented with DXF file generation');
+                return;
+            }
+
+            // Create and download file
+            const blob = new Blob([content], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `survey_error_report.${format}`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set dark theme by default
+            document.body.setAttribute('data-theme', 'dark');
+        });
+    </script>
+</body>
+</html> 

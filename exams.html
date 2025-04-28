@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MapMetric - Exams</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3a86ff;
+            --secondary-color: #8338ec;
+            --accent-color: #ff006e;
+            --background-color: #f8f9fa;
+            --text-color: #2b2d42;
+            --card-background: #ffffff;
+            --shadow-color: rgba(0, 0, 0, 0.08);
+            --success-color: #06d6a0;
+            --warning-color: #ffd60a;
+            --error-color: #ef476f;
+            --border-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --gradient-primary: linear-gradient(135deg, #3a86ff 0%, #8338ec 100%);
+            --gradient-accent: linear-gradient(135deg, #ff006e 0%, #ffbe0b 100%);
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #4cc9f0;
+            --secondary-color: #f72585;
+            --accent-color: #7209b7;
+            --background-color: #0a0a0a;
+            --text-color: #f8f9fa;
+            --card-background: #1a1a1a;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --gradient-primary: linear-gradient(135deg, #4cc9f0 0%, #f72585 100%);
+            --gradient-accent: linear-gradient(135deg, #7209b7 0%, #3a0ca3 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: var(--transition);
+            padding-bottom: 70px;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(58, 134, 255, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(131, 56, 236, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 50% 50%, rgba(255, 0, 110, 0.03) 0%, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        [data-theme="dark"] body {
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(76, 201, 240, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(247, 37, 133, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 50% 50%, rgba(114, 9, 183, 0.05) 0%, transparent 50%);
+        }
+
+        /* Mobile App Header */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 15px;
+            box-shadow: 0 2px 10px var(--shadow-color);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        [data-theme="dark"] .app-header {
+            background: rgba(26, 26, 26, 0.8);
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #ffffff 0%, #4834d4 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .header-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 5px;
+            transition: var(--transition);
+        }
+
+        .header-btn:hover {
+            color: var(--primary-color);
+        }
+
+        /* Main Content */
+        .app-content {
+            margin-top: 60px;
+            padding: 15px;
+        }
+
+        /* Card Styles */
+        .card {
+            background: var(--card-background);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px var(--shadow-color);
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px var(--shadow-color);
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #ffffff 0%, #4834d4 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-title i {
+            font-size: 1.5rem;
+        }
+
+        /* Language Toggle */
+        .language-toggle {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .lang-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: var(--border-radius);
+            background: var(--card-background);
+            color: var(--text-color);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 2px 8px var(--shadow-color);
+        }
+
+        .lang-btn.active {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(58, 134, 255, 0.3);
+        }
+
+        /* Exam Categories */
+        .exam-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .category-btn {
+            background: var(--card-background);
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 15px;
+            color: var(--text-color);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 2px 8px var(--shadow-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .category-btn i {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .category-btn.active {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(58, 134, 255, 0.3);
+        }
+
+        .category-btn.active i {
+            color: white;
+        }
+
+        /* Exam List */
+        .exam-list {
+            display: none;
+        }
+
+        .exam-list.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .exam-item {
+            background: var(--card-background);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px var(--shadow-color);
+            transition: var(--transition);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .exam-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px var(--shadow-color);
+        }
+
+        .exam-info {
+            flex: 1;
+        }
+
+        .exam-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--text-color);
+        }
+
+        .exam-details {
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.8;
+            display: flex;
+            gap: 15px;
+        }
+
+        .exam-details span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .exam-status {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-completed {
+            background: rgba(6, 214, 160, 0.2);
+            color: var(--success-color);
+        }
+
+        .status-in-progress {
+            background: rgba(255, 214, 10, 0.2);
+            color: var(--warning-color);
+        }
+
+        .status-not-started {
+            background: rgba(239, 71, 111, 0.2);
+            color: var(--error-color);
+        }
+
+        .start-exam-btn {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 10px 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 2px 8px rgba(58, 134, 255, 0.3);
+        }
+
+        .start-exam-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(58, 134, 255, 0.4);
+        }
+
+        .start-exam-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-top: 25px;
+        }
+
+        .progress-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.8;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            box-shadow: 0 -2px 10px var(--shadow-color);
+            z-index: 1000;
+        }
+
+        [data-theme="dark"] .bottom-nav {
+            background: rgba(26, 26, 26, 0.8);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: var(--transition);
+            padding: 8px 16px;
+            border-radius: var(--border-radius);
+        }
+
+        .nav-item i {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+
+        .nav-item.active {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(58, 134, 255, 0.3);
+        }
+
+        /* Responsive Design */
+        @media (min-width: 768px) {
+            .app-content {
+                max-width: 800px;
+                margin: 60px auto 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile App Header -->
+    <header class="app-header">
+        <h1 class="app-title">MapMetric Exams</h1>
+    </header>
+
+    <!-- Main Content -->
+    <main class="app-content">
+        <!-- Language Toggle -->
+        <div class="language-toggle" style="display: none;">
+            <button class="lang-btn active" onclick="switchLanguage('en')">English</button>
+            <button class="lang-btn" onclick="switchLanguage('ar')">العربية</button>
+        </div>
+
+        <!-- Progress Overview -->
+        <div class="card">
+            <h2 class="card-title">
+                <i class="fas fa-chart-line"></i>
+                Your Progress
+            </h2>
+            <div class="progress-container">
+                <div class="progress-title">
+                    <span>Overall Completion</span>
+                    <span>65%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 65%;"></div>
+                </div>
+                <div class="progress-stats">
+                    <span>12 of 18 exams completed</span>
+                    <span>6 remaining</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exam Categories -->
+        <div class="card">
+            <h2 class="card-title">
+                <i class="fas fa-th-large"></i>
+                Exam Categories
+            </h2>
+            <div class="exam-categories">
+                <button class="category-btn active" onclick="switchCategory('all')">
+                    <i class="fas fa-globe"></i>
+                    <span>All Exams</span>
+                </button>
+                <button class="category-btn" onclick="switchCategory('semester1')">
+                    <i class="fas fa-1"></i>
+                    <span>Semester 1</span>
+                </button>
+                <button class="category-btn" onclick="switchCategory('semester2')">
+                    <i class="fas fa-2"></i>
+                    <span>Semester 2</span>
+                </button>
+                <button class="category-btn" onclick="switchCategory('semester3')">
+                    <i class="fas fa-3"></i>
+                    <span>Semester 3</span>
+                </button>
+                <button class="category-btn" onclick="switchCategory('semester4')">
+                    <i class="fas fa-4"></i>
+                    <span>Semester 4</span>
+                </button>
+                <button class="category-btn" onclick="switchCategory('semester5')">
+                    <i class="fas fa-5"></i>
+                    <span>Semester 5</span>
+                </button>
+                <button class="category-btn" onclick="switchCategory('general')">
+                    <i class="fas fa-star"></i>
+                    <span>General Exam</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Exam List -->
+        <div class="exam-list active" id="all-exams">
+            <!-- Semester 1 -->
+            <div class="exam-item">
+                <div class="exam-info">
+                    <div class="exam-title">Semester 1 Exam</div>
+                    <div class="exam-details">
+                        <span><i class="fas fa-clock"></i> 30 min</span>
+                        <span><i class="fas fa-question-circle"></i> 40 questions</span>
+                    </div>
+                </div>
+                <div class="exam-status">
+                    <span class="status-badge status-not-started">Not Started</span>
+                    <button class="start-exam-btn" onclick="window.location.href='exam_interface_1.html'">Start</button>
+                </div>
+            </div>
+
+            <!-- Semester 2 -->
+            <div class="exam-item">
+                <div class="exam-info">
+                    <div class="exam-title">Semester 2 Exam</div>
+                    <div class="exam-details">
+                        <span><i class="fas fa-clock"></i> 30 min</span>
+                        <span><i class="fas fa-question-circle"></i> 40 questions</span>
+                    </div>
+                </div>
+                <div class="exam-status">
+                    <span class="status-badge status-not-started">Not Started</span>
+                    <button class="start-exam-btn" onclick="window.location.href='exam_interface_2.html'">Start</button>
+                </div>
+            </div>
+
+            <!-- Semester 3 -->
+            <div class="exam-item">
+                <div class="exam-info">
+                    <div class="exam-title">Semester 3 Exam</div>
+                    <div class="exam-details">
+                        <span><i class="fas fa-clock"></i> 30 min</span>
+                        <span><i class="fas fa-question-circle"></i> 40 questions</span>
+                    </div>
+                </div>
+                <div class="exam-status">
+                    <span class="status-badge status-not-started">Not Started</span>
+                    <button class="start-exam-btn" onclick="window.location.href='exam_interface_3.html'">Start</button>
+                </div>
+            </div>
+
+            <!-- Semester 4 -->
+            <div class="exam-item">
+                <div class="exam-info">
+                    <div class="exam-title">Semester 4 Exam</div>
+                    <div class="exam-details">
+                        <span><i class="fas fa-clock"></i> 30 min</span>
+                        <span><i class="fas fa-question-circle"></i> 40 questions</span>
+                    </div>
+                </div>
+                <div class="exam-status">
+                    <span class="status-badge status-not-started">Not Started</span>
+                    <button class="start-exam-btn" onclick="window.location.href='exam_interface_4.html'">Start</button>
+                </div>
+            </div>
+
+            <!-- Semester 5 -->
+            <div class="exam-item">
+                <div class="exam-info">
+                    <div class="exam-title">Semester 5 Exam</div>
+                    <div class="exam-details">
+                        <span><i class="fas fa-clock"></i> 30 min</span>
+                        <span><i class="fas fa-question-circle"></i> 40 questions</span>
+                    </div>
+                </div>
+                <div class="exam-status">
+                    <span class="status-badge status-not-started">Not Started</span>
+                    <button class="start-exam-btn" onclick="window.location.href='exam_interface_5.html'">Start</button>
+                </div>
+            </div>
+
+            <!-- General Exam -->
+            <div class="exam-item">
+                <div class="exam-info">
+                    <div class="exam-title">General Exam</div>
+                    <div class="exam-details">
+                        <span><i class="fas fa-clock"></i> 60 min</span>
+                        <span><i class="fas fa-question-circle"></i> 100 questions</span>
+                    </div>
+                </div>
+                <div class="exam-status">
+                    <span class="status-badge status-not-started">Not Started</span>
+                    <button class="start-exam-btn" onclick="window.location.href='exam_interface_6.html'">Start</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Individual Semester Exam Lists -->
+        <div class="exam-list" id="semester1-exams">
+            <div class="exam-item">
+                <div class="exam-info">
+                    <div class="exam-title">Semester 1 Exam</div>
+                    <div class="exam-details">
+                        <span><i class="fas fa-clock"></i> 30 min</span>
+                        <span><i class="fas fa-question-circle"></i> 40 questions</span>
+                    </div>
+                </div>
+                <div class="exam-status">
+                    <span class="status-badge status-not-started">Not Started</span>
+                    <button class="start-exam-btn" onclick="window.location.href='exam_interface_1.html'">Start</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="exam-list" id="semester2-exams">
+            <div class="exam-item">
+                <div class="exam-info">
+                    <div class="exam-title">Semester 2 Exam</div>
+                    <div class="exam-details">
+                        <span><i class="fas fa-clock"></i> 30 min</span>
+                        <span><i class="fas fa-question-circle"></i> 40 questions</span>
+                    </div>
+                </div>
+                <div class="exam-status">
+                    <span class="status-badge status-not-started">Not Started</span>
+                    <button class="start-exam-btn" onclick="window.location.href='exam_interface_2.html'">Start</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="exam-list" id="semester3-exams">
+            <div class="exam-item">
+                <div class="exam-info">
+                    <div class="exam-title">Semester 3 Exam</div>
+                    <div class="exam-details">
+                        <span><i class="fas fa-clock"></i> 30 min</span>
+                        <span><i class="fas fa-question-circle"></i> 40 questions</span>
+                    </div>
+                </div>
+                <div class="exam-status">
+                    <span class="status-badge status-not-started">Not Started</span>
+                    <button class="start-exam-btn" onclick="window.location.href='exam_interface_3.html'">Start</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="exam-list" id="semester4-exams">
+            <div class="exam-item">
+                <div class="exam-info">
+                    <div class="exam-title">Semester 4 Exam</div>
+                    <div class="exam-details">
+                        <span><i class="fas fa-clock"></i> 30 min</span>
+                        <span><i class="fas fa-question-circle"></i> 40 questions</span>
+                    </div>
+                </div>
+                <div class="exam-status">
+                    <span class="status-badge status-not-started">Not Started</span>
+                    <button class="start-exam-btn" onclick="window.location.href='exam_interface_4.html'">Start</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="exam-list" id="semester5-exams">
+            <div class="exam-item">
+                <div class="exam-info">
+                    <div class="exam-title">Semester 5 Exam</div>
+                    <div class="exam-details">
+                        <span><i class="fas fa-clock"></i> 30 min</span>
+                        <span><i class="fas fa-question-circle"></i> 40 questions</span>
+                    </div>
+                </div>
+                <div class="exam-status">
+                    <span class="status-badge status-not-started">Not Started</span>
+                    <button class="start-exam-btn" onclick="window.location.href='exam_interface_5.html'">Start</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="exam-list" id="general-exams">
+            <div class="exam-item">
+                <div class="exam-info">
+                    <div class="exam-title">General Exam</div>
+                    <div class="exam-details">
+                        <span><i class="fas fa-clock"></i> 60 min</span>
+                        <span><i class="fas fa-question-circle"></i> 100 questions</span>
+                    </div>
+                </div>
+                <div class="exam-status">
+                    <span class="status-badge status-not-started">Not Started</span>
+                    <button class="start-exam-btn" onclick="window.location.href='exam_interface_6.html'">Start</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="project.html" class="nav-item">
+            <i class="fas fa-book"></i>
+            <span>Learn</span>
+        </a>
+        <a href="exams.html" class="nav-item active">
+            <i class="fas fa-graduation-cap"></i>
+            <span>Train</span>
+        </a>
+    </nav>
+
+    <script>
+        // Language Switch
+        function switchLanguage(lang) {
+            // Update active language button
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Here you would implement language switching logic
+        }
+
+        // Category Switch
+        function switchCategory(category) {
+            // Update active category button
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Hide all exam lists
+            document.querySelectorAll('.exam-list').forEach(list => {
+                list.classList.remove('active');
+            });
+
+            // Show selected category
+            document.getElementById(`${category}-exams`).classList.add('active');
+        }
+
+        // Update exam status
+        function updateExamStatus(examId, isCompleted) {
+            const examStatus = document.querySelectorAll(`#${examId} .status-badge`);
+            examStatus.forEach(status => {
+                if (isCompleted) {
+                    status.textContent = 'Solved';
+                    status.classList.remove('status-not-started');
+                    status.classList.add('status-completed');
+                } else {
+                    status.textContent = 'Not Started';
+                    status.classList.remove('status-completed');
+                    status.classList.add('status-not-started');
+                }
+            });
+        }
+
+        // Check exam completion status
+        function checkExamCompletion() {
+            for (let i = 1; i <= 5; i++) {
+                const isCompleted = localStorage.getItem(`semester${i}_completed`) === 'true';
+                updateExamStatus(`semester${i}-exams`, isCompleted);
+            }
+            const generalCompleted = localStorage.getItem('general_completed') === 'true';
+            updateExamStatus('general-exams', generalCompleted);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set dark theme by default
+            document.body.setAttribute('data-theme', 'dark');
+            
+            // Check exam completion status
+            checkExamCompletion();
+        });
+    </script>
+</body>
+</html> 

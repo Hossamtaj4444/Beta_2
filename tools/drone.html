@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الطائرة بدون طيار في المساحة - MapMaster</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* General Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Tajawal', 'Roboto', sans-serif;
+            color: #333;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3 {
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 10px 15px;
+            background: linear-gradient(45deg, #00ff87, #60efff);
+            color: #1a1a1a;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            transition: transform 0.3s ease;
+            font-size: 14px;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Content Styles */
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            color: #2c3e50;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #eee;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1.2em;
+        }
+
+        .section-content {
+            line-height: 1.6;
+            color: #444;
+            font-size: 1em;
+        }
+
+        /* Excel-like Table Styles */
+        .excel-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            font-size: 0.9em;
+        }
+
+        .excel-table th {
+            background: #f8f9fa;
+            color: #2c3e50;
+            font-weight: 600;
+            padding: 8px;
+            text-align: right;
+            border: 1px solid #dee2e6;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        .excel-table td {
+            padding: 8px;
+            border: 1px solid #dee2e6;
+            color: #444;
+            text-align: right;
+        }
+
+        .excel-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .excel-table tr:hover {
+            background-color: #f1f3f5;
+        }
+
+        /* Steps Styles */
+        .steps {
+            counter-reset: step;
+            margin: 15px 0;
+        }
+
+        .step {
+            position: relative;
+            padding: 12px;
+            margin-bottom: 12px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-right: 4px solid #00ff87;
+        }
+
+        .step:before {
+            counter-increment: step;
+            content: counter(step);
+            position: absolute;
+            right: 0;
+            top: 0;
+            background: #00ff87;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        /* Highlight Boxes */
+        .highlight-box {
+            padding: 12px;
+            margin: 12px 0;
+            border-radius: 5px;
+            background: #f8f9fa;
+            border-right: 4px solid #60efff;
+        }
+
+        .highlight-box-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+
+        ul {
+            padding-right: 15px;
+        }
+
+        li {
+            margin-bottom: 6px;
+            font-size: 0.95em;
+        }
+
+        /* Responsive Design */
+        @media (min-width: 768px) {
+            .container {
+                max-width: 1200px;
+                margin: 20px auto;
+                padding: 30px;
+                border-radius: 15px;
+                min-height: auto;
+            }
+
+            .section {
+                margin-bottom: 40px;
+                padding: 20px;
+            }
+
+            .section-title {
+                font-size: 1.4em;
+            }
+
+            .section-content {
+                font-size: 1.1em;
+            }
+
+            .excel-table {
+                font-size: 1em;
+            }
+
+            .excel-table th, .excel-table td {
+                padding: 12px;
+            }
+
+            .step {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+
+            .back-button {
+                padding: 10px 20px;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-button">
+            <i class="fas fa-arrow-right"></i> العودة للصفحة الرئيسية
+        </a>
+        <h1>الطائرة بدون طيار في المساحة (Drone/UAV)</h1>
+
+        <div class="section">
+            <h2 class="section-title">🟨 أولاً: ما هو الـ Drone (UAV)؟</h2>
+            <div class="section-content">
+                <p>الـ Drone أو UAV (Unmanned Aerial Vehicle) هو طائرة صغيرة بدون طيار تُوجّه عن بعد، تُستخدم في المساحة لتصوير الأرض من الجو وجمع بيانات دقيقة تُستخدم لإنشاء:</p>
+                <ul>
+                    <li>خرائط طبوغرافية</li>
+                    <li>نماذج ارتفاع رقمية (DEM)</li>
+                    <li>خرائط ثلاثية الأبعاد (3D Models)</li>
+                    <li>صور جوية دقيقة (Orthophotos)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🟦 ثانيًا: مكونات نظام المسح الجوي بالـ Drone</h2>
+            <table class="excel-table">
+                <thead>
+                    <tr>
+                        <th>المكون</th>
+                        <th>الوظيفة</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>الطائرة بدون طيار (Drone)</td>
+                        <td>تطير على ارتفاعات محددة وتلتقط صوراً للأرض</td>
+                    </tr>
+                    <tr>
+                        <td>الكاميرا</td>
+                        <td>تلتقط الصور – إما RGB عادية أو متعددة الأطياف أو حرارية</td>
+                    </tr>
+                    <tr>
+                        <td>نظام GPS</td>
+                        <td>لتحديد مكان كل صورة بدقة في الفضاء</td>
+                    </tr>
+                    <tr>
+                        <td>نظام التحكم الأرضي (Ground Station)</td>
+                        <td>يتحكم في الطيران، يحدد المسارات، يلتقط البيانات</td>
+                    </tr>
+                    <tr>
+                        <td>البرمجيات</td>
+                        <td>لمعالجة الصور وإنشاء الخرائط (مثل Pix4D، DroneDeploy، Agisoft)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🟩 ثالثًا: أنواع الطائرات المستخدمة</h2>
+            <table class="excel-table">
+                <thead>
+                    <tr>
+                        <th>النوع</th>
+                        <th>الوصف</th>
+                        <th>الاستخدام</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Multirotor</td>
+                        <td>طائرات متعددة المراوح (مثل DJI Phantom)</td>
+                        <td>للمناطق الصغيرة والمتوسطة</td>
+                    </tr>
+                    <tr>
+                        <td>Fixed Wing</td>
+                        <td>طائرات بجناح ثابت (مثل eBee)</td>
+                        <td>للمساحات الكبيرة جدًا</td>
+                    </tr>
+                    <tr>
+                        <td>Hybrid VTOL</td>
+                        <td>تجمع بين النوعين</td>
+                        <td>كفاءة طيران + قدرة إقلاع عمودي</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🛠️ رابعًا: خطوات استخدام Drone في الرفع المساحي</h2>
+            <div class="steps">
+                <div class="step">
+                    <h3>1. التخطيط للمهمة:</h3>
+                    <ul>
+                        <li>حدد منطقة المسح على الخريطة</li>
+                        <li>اختر الارتفاع المناسب للطيران (عادة 80-120 متر)</li>
+                        <li>حدّد نسبة التداخل بين الصور (مثلاً 70% طولي + 60% عرضي)</li>
+                        <li>فعّل نقاط التحكم الأرضية (GCPs) لزيادة الدقة</li>
+                    </ul>
+                </div>
+                <div class="step">
+                    <h3>2. الطيران:</h3>
+                    <ul>
+                        <li>فعّل الـ Drone وتأكد من البطارية والإعدادات</li>
+                        <li>قم بإطلاق الطائرة تلقائيًا أو يدويًا</li>
+                        <li>الطائرة تطير أوتوماتيكيًا وتلتقط الصور بناءً على المسار</li>
+                    </ul>
+                </div>
+                <div class="step">
+                    <h3>3. جمع الصور:</h3>
+                    <ul>
+                        <li>تُخزن الصور بإحداثيات دقيقة من الـ GPS</li>
+                        <li>بعد الطيران، يتم تنزيل الصور ومعالجتها باستخدام برنامج مختص</li>
+                    </ul>
+                </div>
+                <div class="step">
+                    <h3>4. المعالجة:</h3>
+                    <ul>
+                        <li>يتم إنشاء:</li>
+                        <li>✅ نموذج سطح رقمي</li>
+                        <li>✅ صورة جوية مرجّحة</li>
+                        <li>✅ خريطة ارتفاعات</li>
+                        <li>✅ نموذج ثلاثي الأبعاد</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">📚 خامسًا: المصطلحات المهمة</h2>
+            <table class="excel-table">
+                <thead>
+                    <tr>
+                        <th>المصطلح</th>
+                        <th>الشرح</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>GCPs</td>
+                        <td>Ground Control Points – نقاط مرجعية أرضية لزيادة دقة النتائج</td>
+                    </tr>
+                    <tr>
+                        <td>Orthophoto</td>
+                        <td>صورة جوية معدّلة خالية من التشوهات، بمقياس رسم موحّد</td>
+                    </tr>
+                    <tr>
+                        <td>DEM/DSM</td>
+                        <td>نموذج الارتفاع الرقمي / نموذج سطح الأرض</td>
+                    </tr>
+                    <tr>
+                        <td>Overlap</td>
+                        <td>التداخل بين الصور لضمان التغطية الكاملة</td>
+                    </tr>
+                    <tr>
+                        <td>Flight Plan</td>
+                        <td>خطة الطيران التي يلتزم بها الـ Drone أثناء المهمة</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🔍 سادسًا: دقة القياسات باستخدام الـ Drone</h2>
+            <table class="excel-table">
+                <thead>
+                    <tr>
+                        <th>العامل</th>
+                        <th>التأثير على الدقة</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>نوع الكاميرا</td>
+                        <td>كلما زادت الجودة زادت الدقة</td>
+                    </tr>
+                    <tr>
+                        <td>ارتفاع الطيران</td>
+                        <td>كلما قل الارتفاع زادت الدقة</td>
+                    </tr>
+                    <tr>
+                        <td>استخدام GCPs</td>
+                        <td>يزيد الدقة من ±2 متر إلى ±5 سم أو أقل</td>
+                    </tr>
+                    <tr>
+                        <td>نوع الطائرة</td>
+                        <td>Multirotor أكثر دقة على ارتفاعات منخفضة</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🟥 سابعًا: المميزات والعيوب</h2>
+            <div class="section-content">
+                <h3>✅ المميزات:</h3>
+                <ul>
+                    <li>سرعة كبيرة في تغطية مناطق واسعة</li>
+                    <li>دقة عالية (خاصة باستخدام GCPs)</li>
+                    <li>إنتاج صور جوية عالية الجودة</li>
+                    <li>سهولة تكرار المهمة وتحديث الخرائط</li>
+                </ul>
+                <h3>❌ العيوب:</h3>
+                <ul>
+                    <li>يتأثر بالرياح والظروف الجوية</li>
+                    <li>يتطلب تدريب على الطيران والمعالجة</li>
+                    <li>البطارية محدودة (20-30 دقيقة)</li>
+                    <li>في بعض الدول يحتاج تصاريح للطيران</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">✅ ثامنًا: جدول التلخيص الشامل – Drone (UAV)</h2>
+            <table class="excel-table">
+                <thead>
+                    <tr>
+                        <th>البند</th>
+                        <th>التفاصيل</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>الوظيفة</td>
+                        <td>التصوير الجوي – إنشاء خرائط ونماذج ثلاثية الأبعاد</td>
+                    </tr>
+                    <tr>
+                        <td>الدقة</td>
+                        <td>±5 سم (باستخدام GCPs) – ±2 متر بدون GCPs</td>
+                    </tr>
+                    <tr>
+                        <td>المكونات</td>
+                        <td>طائرة – كاميرا – GPS – وحدة تحكم – برامج معالجة</td>
+                    </tr>
+                    <tr>
+                        <td>أنواع الطائرات</td>
+                        <td>Multirotor – Fixed Wing – VTOL</td>
+                    </tr>
+                    <tr>
+                        <td>الخطوات العملية</td>
+                        <td>تخطيط المهمة → طيران → جمع صور → معالجة → إنتاج خرائط</td>
+                    </tr>
+                    <tr>
+                        <td>المصطلحات المهمة</td>
+                        <td>GCP – Orthophoto – DEM – Flight Plan – Overlap</td>
+                    </tr>
+                    <tr>
+                        <td>المميزات</td>
+                        <td>سريع – دقيق – آمن – مناسب للمناطق الوعرة</td>
+                    </tr>
+                    <tr>
+                        <td>العيوب</td>
+                        <td>يحتاج تدريب – حساس للطقس – عمر بطارية محدود</td>
+                    </tr>
+                    <tr>
+                        <td>الاستخدامات</td>
+                        <td>الزراعة – البناء – التخطيط العمراني – التعدين – الخرائط الطبوغرافية</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html> 

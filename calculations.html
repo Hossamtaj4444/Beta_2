@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SurveyMaster - Professional Surveying Tools</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3a86ff;
+            --secondary-color: #8338ec;
+            --accent-color: #ff006e;
+            --background-color: #f8f9fa;
+            --text-color: #2b2d42;
+            --card-background: #ffffff;
+            --shadow-color: rgba(0, 0, 0, 0.08);
+            --success-color: #06d6a0;
+            --warning-color: #ffd60a;
+            --error-color: #ef476f;
+            --border-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --gradient-primary: linear-gradient(135deg, #3a86ff 0%, #8338ec 100%);
+            --gradient-accent: linear-gradient(135deg, #ff006e 0%, #ffbe0b 100%);
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #4cc9f0;
+            --secondary-color: #f72585;
+            --accent-color: #7209b7;
+            --background-color: #0a0a0a;
+            --text-color: #f8f9fa;
+            --card-background: #1a1a1a;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --gradient-primary: linear-gradient(135deg, #4cc9f0 0%, #f72585 100%);
+            --gradient-accent: linear-gradient(135deg, #7209b7 0%, #3a0ca3 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            line-height: 1.6;
+            transition: var(--transition);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(58, 134, 255, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(131, 56, 236, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 50% 50%, rgba(255, 0, 110, 0.03) 0%, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        [data-theme="dark"] body {
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(76, 201, 240, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(247, 37, 133, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 50% 50%, rgba(114, 9, 183, 0.05) 0%, transparent 50%);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px 30px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 30px var(--shadow-color);
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        [data-theme="dark"] .header {
+            background: rgba(26, 26, 26, 0.95);
+        }
+
+        .header h1 {
+            font-size: 32px;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-weight: 700;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .header-btn {
+            background: rgba(58, 134, 255, 0.1);
+            border: none;
+            color: var(--primary-color);
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .header-btn:hover {
+            background: rgba(58, 134, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(58, 134, 255, 0.15);
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            padding: 20px;
+        }
+
+        .tool-item {
+            background: rgba(26, 26, 26, 0.95);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            transition: var(--transition);
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            max-width: 280px;
+            margin: 0 auto;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            backdrop-filter: blur(10px);
+        }
+
+        .tool-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px var(--shadow-color);
+        }
+
+        .tool-item h3 {
+            color: var(--text-color);
+            font-size: 18px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+
+        .tool-item h3 i {
+            font-size: 24px;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tool-item p {
+            color: var(--text-color);
+            opacity: 0.8;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .tool-features {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .feature-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            background: rgba(76, 201, 240, 0.1);
+            color: var(--primary-color);
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .status-active {
+            background: rgba(6, 214, 160, 0.1);
+            color: var(--success-color);
+        }
+
+        .status-coming {
+            background: rgba(239, 71, 111, 0.1);
+            color: var(--error-color);
+        }
+
+        .status-beta {
+            background: rgba(255, 214, 10, 0.1);
+            color: var(--warning-color);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .tools-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 25px;
+                padding: 15px;
+            }
+
+            .tool-item {
+                max-width: 250px;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-map-marked-alt"></i> SurveyMaster Tools</h1>
+        </div>
+
+        <div class="tools-grid">
+            <!-- Level Surface Method -->
+            <div class="tool-item" onclick="startCalculation('surface')">
+                <h3>
+                    <i class="fas fa-balance-scale"></i>
+                    Level Surface Method
+                    <span class="status-badge status-active">Active</span>
+                </h3>
+                <p>Calculate surface levels with automatic error detection and smart interpolation for precise measurements.</p>
+                <div class="tool-features">
+                    <span class="feature-tag">Error Detection</span>
+                    <span class="feature-tag">Smart Interpolation</span>
+                    <span class="feature-tag">Real-time Validation</span>
+                </div>
+            </div>
+
+            <!-- Land Area Calculator -->
+            <div class="tool-item" onclick="window.location.href='area-converter.html'">
+                <h3>
+                    <i class="fas fa-vector-square"></i>
+                    Calculate Land Area
+                    <span class="status-badge status-active">Active</span>
+                </h3>
+                <p>Convert between different land measurement units (Feddans, Qirats, Sahms, Square Meters) with precision.</p>
+                <div class="tool-features">
+                    <span class="feature-tag">Bi-directional Conversion</span>
+                    <span class="feature-tag">Real-time Calculation</span>
+                    <span class="feature-tag">Multiple Units</span>
+                </div>
+            </div>
+
+            <!-- Survey Error Analysis -->
+            <div class="tool-item" onclick="window.location.href='survey_analysis.html'">
+                <h3>
+                    <i class="fas fa-ruler-combined"></i>
+                    Survey Error Analysis
+                    <span class="status-badge status-active">Active</span>
+                </h3>
+                <p>Analyze and visualize survey measurement errors, calculate traverse closures, and transform coordinates with precision.</p>
+                <div class="tool-features">
+                    <span class="feature-tag">Error Analysis</span>
+                    <span class="feature-tag">Traverse Closure</span>
+                    <span class="feature-tag">Coordinate Transform</span>
+                    <span class="feature-tag">Data Visualization</span>
+                </div>
+            </div>
+
+            <!-- Distance Calculator -->
+            <div class="tool-item" onclick="startCalculation('distance')">
+                <h3>
+                    <i class="fas fa-ruler"></i>
+                    Distance Calculator
+                    <span class="status-badge status-beta">Beta</span>
+                </h3>
+                <p>Calculate horizontal and vertical distances with enhanced accuracy and error correction.</p>
+                <div class="tool-features">
+                    <span class="feature-tag">3D Analysis</span>
+                    <span class="feature-tag">Error Correction</span>
+                    <span class="feature-tag">Slope Calculation</span>
+                </div>
+            </div>
+
+            <!-- Area Calculator -->
+            <div class="tool-item" onclick="startCalculation('area')">
+                <h3>
+                    <i class="fas fa-draw-polygon"></i>
+                    Area Calculator
+                    <span class="status-badge status-beta">Beta</span>
+                </h3>
+                <p>Calculate areas of complex shapes with automatic boundary detection and optimization.</p>
+                <div class="tool-features">
+                    <span class="feature-tag">Boundary Detection</span>
+                    <span class="feature-tag">Shape Optimization</span>
+                    <span class="feature-tag">Multiple Methods</span>
+                </div>
+            </div>
+
+            <!-- Volume Calculator -->
+            <div class="tool-item" onclick="startCalculation('volume')">
+                <h3>
+                    <i class="fas fa-cube"></i>
+                    Volume Calculator
+                    <span class="status-badge status-beta">Beta</span>
+                </h3>
+                <p>Calculate volumes with terrain analysis and 3D modeling capabilities.</p>
+                <div class="tool-features">
+                    <span class="feature-tag">Terrain Analysis</span>
+                    <span class="feature-tag">3D Modeling</span>
+                    <span class="feature-tag">Cut & Fill</span>
+                </div>
+            </div>
+
+            <!-- Coordinate Converter -->
+            <div class="tool-item" onclick="startCalculation('coordinates')">
+                <h3>
+                    <i class="fas fa-crosshairs"></i>
+                    Coordinate Converter
+                    <span class="status-badge status-coming">Coming Soon</span>
+                </h3>
+                <p>Convert between different coordinate systems and datums with high precision.</p>
+                <div class="tool-features">
+                    <span class="feature-tag">Multiple Systems</span>
+                    <span class="feature-tag">Datum Conversion</span>
+                    <span class="feature-tag">Batch Processing</span>
+                </div>
+            </div>
+
+            <!-- Traverse Calculator -->
+            <div class="tool-item" onclick="startCalculation('traverse')">
+                <h3>
+                    <i class="fas fa-compass"></i>
+                    Traverse Calculator
+                    <span class="status-badge status-beta">Beta</span>
+                </h3>
+                <p>Calculate closed and open traverses with automatic error detection and adjustment.</p>
+                <div class="tool-features">
+                    <span class="feature-tag">Error Detection</span>
+                    <span class="feature-tag">Auto Adjustment</span>
+                    <span class="feature-tag">Multiple Methods</span>
+                </div>
+            </div>
+
+            <!-- Leveling Calculator -->
+            <div class="tool-item" onclick="startCalculation('leveling')">
+                <h3>
+                    <i class="fas fa-level-up-alt"></i>
+                    Leveling Calculator
+                    <span class="status-badge status-coming">Coming Soon</span>
+                </h3>
+                <p>Perform differential leveling calculations with automatic error checking and adjustment.</p>
+                <div class="tool-features">
+                    <span class="feature-tag">Error Checking</span>
+                    <span class="feature-tag">Auto Adjustment</span>
+                    <span class="feature-tag">Profile Generation</span>
+                </div>
+            </div>
+
+            <!-- Curve Calculator -->
+            <div class="tool-item" onclick="startCalculation('curve')">
+                <h3>
+                    <i class="fas fa-circle"></i>
+                    Curve Calculator
+                    <span class="status-badge status-coming">Coming Soon</span>
+                </h3>
+                <p>Calculate horizontal and vertical curves with detailed stationing and stakeout data.</p>
+                <div class="tool-features">
+                    <span class="feature-tag">Horizontal Curves</span>
+                    <span class="feature-tag">Vertical Curves</span>
+                    <span class="feature-tag">Stakeout Data</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function startCalculation(method) {
+            localStorage.setItem('selectedCalculationMethod', method);
+            window.location.href = `calculation-interface.html?method=${method}`;
+        }
+
+        // Set dark theme by default
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.setAttribute('data-theme', 'dark');
+        });
+    </script>
+</body>
+</html> 

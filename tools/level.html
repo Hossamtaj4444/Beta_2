@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>جهاز الميزان - MapMetric</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* General Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Tajawal', 'Roboto', sans-serif;
+            color: #333;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3 {
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 10px 15px;
+            background: linear-gradient(45deg, #00ff87, #60efff);
+            color: #1a1a1a;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            transition: transform 0.3s ease;
+            font-size: 14px;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Content Styles */
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            color: #2c3e50;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #eee;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1.2em;
+        }
+
+        .tool-image {
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+            margin: 20px auto;
+            display: block;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .section-content {
+            line-height: 1.6;
+            color: #444;
+            font-size: 1em;
+        }
+
+        /* Excel-like Table Styles */
+        .excel-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            font-size: 0.9em;
+        }
+
+        .excel-table th {
+            background: #f8f9fa;
+            color: #2c3e50;
+            font-weight: 600;
+            padding: 8px;
+            text-align: right;
+            border: 1px solid #dee2e6;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        .excel-table td {
+            padding: 8px;
+            border: 1px solid #dee2e6;
+            color: #444;
+            text-align: right;
+        }
+
+        .excel-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .excel-table tr:hover {
+            background-color: #f1f3f5;
+        }
+
+        /* Steps Styles */
+        .steps {
+            counter-reset: step;
+            margin: 15px 0;
+        }
+
+        .step {
+            position: relative;
+            padding: 12px;
+            margin-bottom: 12px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-right: 4px solid #00ff87;
+        }
+
+        .step:before {
+            counter-increment: step;
+            content: counter(step);
+            position: absolute;
+            right: 0;
+            top: 0;
+            background: #00ff87;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        /* Highlight Boxes */
+        .highlight-box {
+            padding: 12px;
+            margin: 12px 0;
+            border-radius: 5px;
+            background: #f8f9fa;
+            border-right: 4px solid #60efff;
+        }
+
+        .highlight-box-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+
+        ul {
+            padding-right: 15px;
+        }
+
+        li {
+            margin-bottom: 6px;
+            font-size: 0.95em;
+        }
+
+        /* Responsive Design */
+        @media (min-width: 768px) {
+            .container {
+                max-width: 1200px;
+                margin: 20px auto;
+                padding: 30px;
+                border-radius: 15px;
+                min-height: auto;
+            }
+
+            .section {
+                margin-bottom: 40px;
+                padding: 20px;
+            }
+
+            .section-title {
+                font-size: 1.4em;
+            }
+
+            .section-content {
+                font-size: 1.1em;
+            }
+
+            .excel-table {
+                font-size: 1em;
+            }
+
+            .excel-table th, .excel-table td {
+                padding: 12px;
+            }
+
+            .step {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+
+            .back-button {
+                padding: 10px 20px;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-button">
+            <i class="fas fa-arrow-right"></i> العودة للصفحة الرئيسية
+        </a>
+        <h1>جهاز الميزان</h1>
+        <img src="../img/level.jpg" alt="جهاز الميزان" class="tool-image">
+
+        <div class="section">
+            <h2 class="section-title">🟨 أولاً: ما هو جهاز الميزان (Level)؟</h2>
+            <div class="section-content">
+                <p>الميزان هو جهاز مساحي يُستخدم لقياس الارتفاعات والمناسيب النسبية بين النقاط المختلفة على سطح الأرض.</p>
+                <p>وهو لا يقيس الزوايا أو المسافات، لكنه يعطي فرق المنسوب بين نقطتين عن طريق قراءة الطول الرأسي على القامة (Staff).</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🟦 ثانيًا: أنواع جهاز الميزان</h2>
+            <table class="excel-table">
+                <thead>
+                    <tr>
+                        <th>النوع</th>
+                        <th>الوصف</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>الميزان البصري (Optical)</td>
+                        <td>النوع التقليدي ويُستخدم مع القامة ويعتمد على العين البشرية</td>
+                    </tr>
+                    <tr>
+                        <td>الميزان الإلكتروني (Digital)</td>
+                        <td>يحتوي على شاشة رقمية، ويقوم بالحساب والقراءة تلقائيًا</td>
+                    </tr>
+                    <tr>
+                        <td>الميزان الليزري (Laser Level)</td>
+                        <td>يطلق شعاع ليزر دائري لتحديد مستوى أفقي 360° – يُستخدم في التشطيبات</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🟩 ثالثًا: أجزاء الجهاز</h2>
+            <table class="excel-table">
+                <thead>
+                    <tr>
+                        <th>الجزء</th>
+                        <th>وظيفته</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>العدسة (Telescope)</td>
+                        <td>لتوجيه الجهاز نحو القامة وقراءة القياس</td>
+                    </tr>
+                    <tr>
+                        <td>العدسة العينية (Eyepiece)</td>
+                        <td>لتوضيح القراءة على القامة</td>
+                    </tr>
+                    <tr>
+                        <td>ميزان التسوية (Bubble Level)</td>
+                        <td>لضبط الجهاز أفقياً قبل القياس</td>
+                    </tr>
+                    <tr>
+                        <td>قاعدة الجهاز</td>
+                        <td>لتثبيت الميزان على الحامل الثلاثي</td>
+                    </tr>
+                    <tr>
+                        <td>البراغي الدقيقة</td>
+                        <td>لضبط وضع الميزان وتحقيق الأفقية بدقة</td>
+                    </tr>
+                    <tr>
+                        <td>منقلة (أحيانًا)</td>
+                        <td>لتسجيل الزاوية (نادرًا – في بعض الأجهزة المتقدمة)</td>
+                    </tr>
+                    <tr>
+                        <td>شاشة رقمية</td>
+                        <td>(في الأجهزة الرقمية) لعرض القياسات وحساب الفرق تلقائيًا</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🛠️ رابعًا: خطوات استخدام جهاز الميزان عمليًا</h2>
+            <div class="steps">
+                <div class="step">
+                    <h3>1. تثبيت الجهاز:</h3>
+                    <ul>
+                        <li>ثبت الحامل الثلاثي في نقطة وسط بين النقاط المراد قياسها</li>
+                        <li>ركب الجهاز على الحامل</li>
+                        <li>اضبطه باستخدام ميزان التسوية حتى يصبح أفقيًا تمامًا</li>
+                    </ul>
+                </div>
+                <div class="step">
+                    <h3>2. أخذ القراءة:</h3>
+                    <ul>
+                        <li>وجه العدسة إلى القامة (Staff) الموضوعة على النقطة الأولى</li>
+                        <li>سجل القراءة (تُسمى Back Sight)</li>
+                        <li>وجه العدسة إلى النقطة التالية وسجل القراءة (تُسمى Fore Sight)</li>
+                        <li>احسب فرق المنسوب = القراءة الأولى – القراءة الثانية</li>
+                    </ul>
+                </div>
+                <div class="step">
+                    <h3>3. الحساب:</h3>
+                    <ul>
+                        <li>المنسوب الجديد = منسوب النقطة الأولى ± فرق المنسوب (حسب الاتجاه صعود/نزول)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">📚 خامسًا: أهم المصطلحات</h2>
+            <table class="excel-table">
+                <thead>
+                    <tr>
+                        <th>المصطلح</th>
+                        <th>الشرح</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Back Sight (BS)</td>
+                        <td>أول قراءة على نقطة معلومة المنسوب</td>
+                    </tr>
+                    <tr>
+                        <td>Fore Sight (FS)</td>
+                        <td>قراءة على نقطة نريد معرفة منسوبها</td>
+                    </tr>
+                    <tr>
+                        <td>Intermediate Sight (IS)</td>
+                        <td>قراءة بين النقطتين – ليست بداية ولا نهاية</td>
+                    </tr>
+                    <tr>
+                        <td>Height of Instrument (HI)</td>
+                        <td>ارتفاع الجهاز عن منسوب النقطة الأولى</td>
+                    </tr>
+                    <tr>
+                        <td>Reduced Level (RL)</td>
+                        <td>المنسوب النهائي للنقطة</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🎯 سادسًا: استخدامات جهاز الميزان</h2>
+            <div class="section-content">
+                <ul>
+                    <li>قياس مناسيب الأرض الطبيعية</li>
+                    <li>حساب الحفر والردم في المواقع</li>
+                    <li>إنشاء الطرق والمجاري والبنية التحتية</li>
+                    <li>أعمال التسوية للمنشآت والقواعد الخرسانية</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🟥 سابعًا: مميزات وعيوب</h2>
+            <div class="section-content">
+                <h3>✅ المميزات:</h3>
+                <ul>
+                    <li>دقة عالية في حساب المناسيب</li>
+                    <li>سهل الاستخدام</li>
+                    <li>لا يتأثر بالمسافات طالما القامة واضحة</li>
+                </ul>
+                <h3>❌ العيوب:</h3>
+                <ul>
+                    <li>لا يقيس المسافات</li>
+                    <li>يحتاج شخصين للعمل (واحد يمسك القامة، والآخر يقرأ)</li>
+                    <li>يتأثر بالأرض غير المستوية</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">✅ ثامنًا: جدول التلخيص الشامل – Level</h2>
+            <table class="excel-table">
+                <thead>
+                    <tr>
+                        <th>البند</th>
+                        <th>التفاصيل</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>الوظيفة</td>
+                        <td>قياس فرق المناسيب بين النقاط</td>
+                    </tr>
+                    <tr>
+                        <td>الدقة</td>
+                        <td>±1.5 ملم لكل 1 كم تسوية تقريبًا (حسب النوع)</td>
+                    </tr>
+                    <tr>
+                        <td>الأنواع</td>
+                        <td>بصري – رقمي – ليزري</td>
+                    </tr>
+                    <tr>
+                        <td>المكونات</td>
+                        <td>منظار – ميزان تسوية – قاعدة – براغي ضبط – شاشة (إن وجدت)</td>
+                    </tr>
+                    <tr>
+                        <td>المصطلحات المهمة</td>
+                        <td>BS – FS – IS – RL – HI</td>
+                    </tr>
+                    <tr>
+                        <td>خطوات العمل</td>
+                        <td>تثبيت – توجيه – قراءة – حساب فرق المنسوب</td>
+                    </tr>
+                    <tr>
+                        <td>المميزات</td>
+                        <td>دقيق – سهل – مفيد في مشاريع الحفر والتسوية</td>
+                    </tr>
+                    <tr>
+                        <td>العيوب</td>
+                        <td>لا يقيس مسافات – يحتاج شخصين – حساس لموقع القامة</td>
+                    </tr>
+                    <tr>
+                        <td>الاستخدامات</td>
+                        <td>الطرق – الإنشاءات – التسوية – البنية التحتية</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html> 

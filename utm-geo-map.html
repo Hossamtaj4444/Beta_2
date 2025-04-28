@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UTM Geo Map - MapMetric</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        :root {
+            --bg-dark: #1a1a1a;
+            --card-bg: #2d2d2d;
+            --card-hover: #363636;
+            --text: #ffffff;
+            --text-secondary: #b3b3b3;
+            --primary: #4834d4;
+            --primary-hover: #5a4adf;
+            --secondary: #6c5ce7;
+            --accent: #00cec9;
+            --border-radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--text);
+            background: var(--bg-dark);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .sidebar {
+            width: 350px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .map-container {
+            flex: 1;
+            position: relative;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--accent);
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        .section-title i {
+            font-size: 1.4rem;
+        }
+
+        .control-panel, .map-layers, .coordinates-display {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .layer-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .layer-option:hover {
+            background: var(--card-hover);
+            transform: translateX(5px);
+        }
+
+        .layer-option input[type="radio"] {
+            margin-right: 12px;
+            accent-color: var(--accent);
+        }
+
+        .layer-option label {
+            flex: 1;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .layer-option i {
+            font-size: 1.2rem;
+            color: var(--accent);
+        }
+
+        .coordinates-display {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: var(--border-radius);
+        }
+
+        .tools-panel {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-top: 20px;
+        }
+
+        .measurement-tools {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .measurement-btn {
+            flex: 1;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            border-radius: var(--border-radius);
+            color: var(--text);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .measurement-btn:hover {
+            background: var(--card-hover);
+            transform: translateY(-2px);
+        }
+
+        .measurement-btn.active {
+            background: var(--primary);
+        }
+
+        .measurement-result {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-top: 15px;
+            display: none;
+        }
+
+        .measurement-result.active {
+            display: block;
+        }
+
+        .export-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .export-btn {
+            flex: 1;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            border-radius: var(--border-radius);
+            color: var(--text);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .export-btn:hover {
+            background: var(--card-hover);
+            transform: translateY(-2px);
+        }
+
+        .marker-list {
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .marker-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius);
+            margin-bottom: 8px;
+        }
+
+        .marker-item:hover {
+            background: var(--card-hover);
+        }
+
+        .marker-info {
+            flex: 1;
+        }
+
+        .marker-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .marker-action-btn {
+            padding: 6px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .marker-action-btn:hover {
+            color: var(--accent);
+        }
+
+        .search-box {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--card-bg);
+            padding: 10px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .search-input {
+            width: 250px;
+            padding: 8px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            border-radius: var(--border-radius);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-hover);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                padding: 10px;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                max-height: 40vh;
+            }
+
+            .map-container {
+                height: 60vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="map-layers">
+                <div class="section-title">
+                    <i class="fas fa-layer-group"></i>
+                    <span>Map Layers</span>
+                </div>
+                <div class="layer-option">
+                    <input type="radio" name="mapLayer" id="osm" value="osm" checked>
+                    <label for="osm"><i class="fas fa-map"></i> OpenStreetMap</label>
+                </div>
+                <div class="layer-option">
+                    <input type="radio" name="mapLayer" id="satellite" value="satellite">
+                    <label for="satellite"><i class="fas fa-satellite"></i> Satellite</label>
+                </div>
+                <div class="layer-option">
+                    <input type="radio" name="mapLayer" id="terrain" value="terrain">
+                    <label for="terrain"><i class="fas fa-mountain"></i> Terrain</label>
+                </div>
+                <div class="layer-option">
+                    <input type="radio" name="mapLayer" id="cycle" value="cycle">
+                    <label for="cycle"><i class="fas fa-bicycle"></i> Cycle Map</label>
+                </div>
+                <div class="layer-option">
+                    <input type="radio" name="mapLayer" id="transport" value="transport">
+                    <label for="transport"><i class="fas fa-bus"></i> Transport Map</label>
+                </div>
+                <div class="layer-option">
+                    <input type="radio" name="mapLayer" id="humanitarian" value="humanitarian">
+                    <label for="humanitarian"><i class="fas fa-hands-helping"></i> Humanitarian</label>
+                </div>
+                <div class="layer-option">
+                    <input type="radio" name="mapLayer" id="dark" value="dark">
+                    <label for="dark"><i class="fas fa-moon"></i> Dark Map</label>
+                </div>
+            </div>
+
+            <div class="control-panel">
+                <div class="section-title">
+                    <i class="fas fa-crosshairs"></i>
+                    <span>UTM Coordinates</span>
+                </div>
+                <div class="input-group">
+                    <label for="zone">Zone</label>
+                    <select id="zone">
+                        <option value="">Select Zone</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="easting">Easting (m)</label>
+                    <input type="number" id="easting" placeholder="Enter easting">
+                </div>
+                <div class="input-group">
+                    <label for="northing">Northing (m)</label>
+                    <input type="number" id="northing" placeholder="Enter northing">
+                </div>
+                <div class="button-group">
+                    <button class="btn btn-primary" id="addMarker">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Add Marker
+                    </button>
+                    <button class="btn btn-secondary" id="clearMarkers">
+                        <i class="fas fa-trash"></i>
+                        Clear All
+                    </button>
+                </div>
+            </div>
+
+            <div class="coordinates-display">
+                <div class="section-title">
+                    <i class="fas fa-location-dot"></i>
+                    <span>Current Coordinates</span>
+                </div>
+                <div class="coordinate-item">
+                    <span>Latitude:</span>
+                    <span id="currentLat">-</span>
+                </div>
+                <div class="coordinate-item">
+                    <span>Longitude:</span>
+                    <span id="currentLng">-</span>
+                </div>
+                <div class="coordinate-item">
+                    <span>UTM Zone:</span>
+                    <span id="currentZone">-</span>
+                </div>
+                <div class="coordinate-item">
+                    <span>Easting:</span>
+                    <span id="currentEasting">-</span>
+                </div>
+                <div class="coordinate-item">
+                    <span>Northing:</span>
+                    <span id="currentNorthing">-</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="map-container">
+            <div id="map"></div>
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="Search location...">
+            </div>
+        </div>
+    </div>
+
+    <div class="tools-panel">
+        <div class="section-title">
+            <i class="fas fa-ruler"></i>
+            <span>Measurement Tools</span>
+        </div>
+        <div class="measurement-tools">
+            <button class="measurement-btn" id="measureDistance">
+                <i class="fas fa-ruler"></i>
+                Distance
+            </button>
+            <button class="measurement-btn" id="measureArea">
+                <i class="fas fa-draw-polygon"></i>
+                Area
+            </button>
+        </div>
+        <div class="measurement-result" id="measurementResult">
+            <div class="coordinate-item">
+                <span>Measurement:</span>
+                <span id="measurementValue">-</span>
+            </div>
+        </div>
+
+        <div class="section-title" style="margin-top: 20px;">
+            <i class="fas fa-download"></i>
+            <span>Export Options</span>
+        </div>
+        <div class="export-options">
+            <button class="export-btn" id="exportCSV">
+                <i class="fas fa-file-csv"></i>
+                CSV
+            </button>
+            <button class="export-btn" id="exportKML">
+                <i class="fas fa-file-code"></i>
+                KML
+            </button>
+            <button class="export-btn" id="exportGeoJSON">
+                <i class="fas fa-file-alt"></i>
+                GeoJSON
+            </button>
+        </div>
+
+        <div class="section-title" style="margin-top: 20px;">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>Markers List</span>
+        </div>
+        <div class="marker-list" id="markerList">
+            <!-- Markers will be added here dynamically -->
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.7.5/proj4.js"></script>
+    <script src="https://unpkg.com/leaflet-measure@3.1.0/dist/leaflet-measure.js"></script>
+    <script>
+        // Initialize the map
+        const map = L.map('map').setView([0, 0], 2);
+
+        // Define map layers
+        const mapLayers = {
+            osm: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }),
+            satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: '© Esri'
+            }),
+            terrain: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenTopoMap'
+            }),
+            cycle: L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', {
+                attribution: '© CyclOSM'
+            }),
+            transport: L.tileLayer('https://{s}.tile.thunderforest.com/transport/{z}/{x}/{y}.png?apikey=9e1b3f1b1b1b1b1b1b1b1b1b1b1b1b1b', {
+                attribution: '© Thunderforest'
+            }),
+            humanitarian: L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+                attribution: '© Humanitarian OpenStreetMap Team'
+            }),
+            dark: L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+                attribution: '© CARTO'
+            })
+        };
+
+        // Add default layer
+        mapLayers.osm.addTo(map);
+
+        // Handle layer changes
+        document.querySelectorAll('input[name="mapLayer"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const selectedLayer = this.value;
+                map.eachLayer((layer) => {
+                    map.removeLayer(layer);
+                });
+                mapLayers[selectedLayer].addTo(map);
+                markers.addTo(map);
+            });
+        });
+
+        // Initialize markers layer
+        const markers = L.layerGroup().addTo(map);
+
+        // Populate UTM zones
+        const zoneSelect = document.getElementById('zone');
+        for (let i = 1; i <= 60; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = `Zone ${i}`;
+            zoneSelect.appendChild(option);
+        }
+
+        // Function to convert UTM to Lat/Lng
+        function utmToLatLng(zone, easting, northing) {
+            const utm = `+proj=utm +zone=${zone} +ellps=WGS84 +datum=WGS84 +units=m +no_defs`;
+            const wgs84 = '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs';
+            return proj4(utm, wgs84, [easting, northing]);
+        }
+
+        // Function to convert Lat/Lng to UTM
+        function latLngToUtm(lat, lng) {
+            const zone = Math.floor((lng + 180) / 6) + 1;
+            const utm = `+proj=utm +zone=${zone} +ellps=WGS84 +datum=WGS84 +units=m +no_defs`;
+            const wgs84 = '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs';
+            const [easting, northing] = proj4(wgs84, utm, [lng, lat]);
+            return { zone, easting, northing };
+        }
+
+        // Add marker button click handler
+        document.getElementById('addMarker').addEventListener('click', function() {
+            const zone = document.getElementById('zone').value;
+            const easting = parseFloat(document.getElementById('easting').value);
+            const northing = parseFloat(document.getElementById('northing').value);
+
+            if (!zone || isNaN(easting) || isNaN(northing)) {
+                alert('Please fill in all fields with valid numbers');
+                return;
+            }
+
+            const [lat, lng] = utmToLatLng(zone, easting, northing);
+            const marker = L.marker([lat, lng]).addTo(markers);
+            
+            marker.bindPopup(`
+                <div class="marker-info">
+                    <strong>UTM Coordinates:</strong><br>
+                    Zone: ${zone}<br>
+                    Easting: ${easting.toFixed(2)} m<br>
+                    Northing: ${northing.toFixed(2)} m<br>
+                    <strong>Lat/Lng:</strong><br>
+                    Latitude: ${lat.toFixed(6)}°<br>
+                    Longitude: ${lng.toFixed(6)}°
+                </div>
+            `);
+
+            map.setView([lat, lng], 15);
+            updateMarkerList();
+        });
+
+        // Clear markers button click handler
+        document.getElementById('clearMarkers').addEventListener('click', function() {
+            markers.clearLayers();
+            updateMarkerList();
+        });
+
+        // Update coordinates on map click
+        map.on('click', function(e) {
+            const { lat, lng } = e.latlng;
+            const utm = latLngToUtm(lat, lng);
+            
+            document.getElementById('currentLat').textContent = lat.toFixed(6) + '°';
+            document.getElementById('currentLng').textContent = lng.toFixed(6) + '°';
+            document.getElementById('currentZone').textContent = utm.zone;
+            document.getElementById('currentEasting').textContent = utm.easting.toFixed(2) + ' m';
+            document.getElementById('currentNorthing').textContent = utm.northing.toFixed(2) + ' m';
+        });
+
+        // Add scale control
+        L.control.scale().addTo(map);
+
+        // Initialize measurement tools
+        const measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares',
+            activeColor: '#4834d4',
+            completedColor: '#6c5ce7'
+        });
+        measureControl.addTo(map);
+
+        // Handle measurement tools
+        document.getElementById('measureDistance').addEventListener('click', function() {
+            measureControl.startMeasure('distance');
+            this.classList.add('active');
+            document.getElementById('measureArea').classList.remove('active');
+        });
+
+        document.getElementById('measureArea').addEventListener('click', function() {
+            measureControl.startMeasure('area');
+            this.classList.add('active');
+            document.getElementById('measureDistance').classList.remove('active');
+        });
+
+        // Handle measurement results
+        map.on('measurefinish', function(e) {
+            const result = document.getElementById('measurementResult');
+            const value = document.getElementById('measurementValue');
+            
+            if (e.measureType === 'distance') {
+                value.textContent = `${e.total.toFixed(2)} meters`;
+            } else {
+                value.textContent = `${e.total.toFixed(2)} square meters`;
+            }
+            
+            result.classList.add('active');
+        });
+
+        // Handle export options
+        document.getElementById('exportCSV').addEventListener('click', function() {
+            exportMarkers('csv');
+        });
+
+        document.getElementById('exportKML').addEventListener('click', function() {
+            exportMarkers('kml');
+        });
+
+        document.getElementById('exportGeoJSON').addEventListener('click', function() {
+            exportMarkers('geojson');
+        });
+
+        function exportMarkers(format) {
+            const markersData = [];
+            markers.eachLayer(function(marker) {
+                const latlng = marker.getLatLng();
+                const utm = latLngToUtm(latlng.lat, latlng.lng);
+                markersData.push({
+                    lat: latlng.lat,
+                    lng: latlng.lng,
+                    zone: utm.zone,
+                    easting: utm.easting,
+                    northing: utm.northing
+                });
+            });
+
+            let content = '';
+            if (format === 'csv') {
+                content = 'Latitude,Longitude,Zone,Easting,Northing\n';
+                markersData.forEach(marker => {
+                    content += `${marker.lat},${marker.lng},${marker.zone},${marker.easting},${marker.northing}\n`;
+                });
+            } else if (format === 'kml') {
+                content = `<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document>
+${markersData.map(marker => `
+<Placemark>
+<Point>
+<coordinates>${marker.lng},${marker.lat},0</coordinates>
+</Point>
+</Placemark>`).join('')}
+</Document>
+</kml>`;
+            } else if (format === 'geojson') {
+                content = JSON.stringify({
+                    type: 'FeatureCollection',
+                    features: markersData.map(marker => ({
+                        type: 'Feature',
+                        geometry: {
+                            type: 'Point',
+                            coordinates: [marker.lng, marker.lat]
+                        },
+                        properties: {
+                            zone: marker.zone,
+                            easting: marker.easting,
+                            northing: marker.northing
+                        }
+                    }))
+                }, null, 2);
+            }
+
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `markers.${format}`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Handle marker list
+        function updateMarkerList() {
+            const markerList = document.getElementById('markerList');
+            markerList.innerHTML = '';
+            
+            markers.eachLayer(function(marker) {
+                const latlng = marker.getLatLng();
+                const utm = latLngToUtm(latlng.lat, latlng.lng);
+                
+                const markerItem = document.createElement('div');
+                markerItem.className = 'marker-item';
+                markerItem.innerHTML = `
+                    <div class="marker-info">
+                        <div>Zone: ${utm.zone}</div>
+                        <div>Easting: ${utm.easting.toFixed(2)} m</div>
+                        <div>Northing: ${utm.northing.toFixed(2)} m</div>
+                    </div>
+                    <div class="marker-actions">
+                        <button class="marker-action-btn" onclick="centerMarker(${latlng.lat}, ${latlng.lng})">
+                            <i class="fas fa-crosshairs"></i>
+                        </button>
+                        <button class="marker-action-btn" onclick="removeMarker(${latlng.lat}, ${latlng.lng})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                markerList.appendChild(markerItem);
+            });
+        }
+
+        // Add to global scope for marker list buttons
+        window.centerMarker = function(lat, lng) {
+            map.setView([lat, lng], 15);
+        };
+
+        window.removeMarker = function(lat, lng) {
+            markers.eachLayer(function(marker) {
+                const markerLatLng = marker.getLatLng();
+                if (markerLatLng.lat === lat && markerLatLng.lng === lng) {
+                    markers.removeLayer(marker);
+                    updateMarkerList();
+                }
+            });
+        };
+
+        // Add search functionality
+        const searchInput = document.querySelector('.search-input');
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const query = this.value;
+                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.length > 0) {
+                            const result = data[0];
+                            map.setView([result.lat, result.lon], 15);
+                        }
+                    });
+            }
+        });
+    </script>
+</body>
+</html> 

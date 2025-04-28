@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام GPS اللحظي الدقيق - MapMetric</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* General Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Tajawal', 'Roboto', sans-serif;
+            color: #333;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3 {
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 10px 15px;
+            background: linear-gradient(45deg, #00ff87, #60efff);
+            color: #1a1a1a;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            transition: transform 0.3s ease;
+            font-size: 14px;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Content Styles */
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            color: #2c3e50;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #eee;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1.2em;
+        }
+
+        .section-content {
+            line-height: 1.6;
+            color: #444;
+            font-size: 1em;
+        }
+
+        /* Excel-like Table Styles */
+        .excel-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            font-size: 0.9em;
+        }
+
+        .excel-table th {
+            background: #f8f9fa;
+            color: #2c3e50;
+            font-weight: 600;
+            padding: 8px;
+            text-align: right;
+            border: 1px solid #dee2e6;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        .excel-table td {
+            padding: 8px;
+            border: 1px solid #dee2e6;
+            color: #444;
+            text-align: right;
+        }
+
+        .excel-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .excel-table tr:hover {
+            background-color: #f1f3f5;
+        }
+
+        /* Steps Styles */
+        .steps {
+            counter-reset: step;
+            margin: 15px 0;
+        }
+
+        .step {
+            position: relative;
+            padding: 12px;
+            margin-bottom: 12px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-right: 4px solid #00ff87;
+        }
+
+        .step:before {
+            counter-increment: step;
+            content: counter(step);
+            position: absolute;
+            right: 0;
+            top: 0;
+            background: #00ff87;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        /* Highlight Boxes */
+        .highlight-box {
+            padding: 12px;
+            margin: 12px 0;
+            border-radius: 5px;
+            background: #f8f9fa;
+            border-right: 4px solid #60efff;
+        }
+
+        .highlight-box-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+
+        ul {
+            padding-right: 15px;
+        }
+
+        li {
+            margin-bottom: 6px;
+            font-size: 0.95em;
+        }
+
+        /* Responsive Design */
+        @media (min-width: 768px) {
+            .container {
+                max-width: 1200px;
+                margin: 20px auto;
+                padding: 30px;
+                border-radius: 15px;
+                min-height: auto;
+            }
+
+            .section {
+                margin-bottom: 40px;
+                padding: 20px;
+            }
+
+            .section-title {
+                font-size: 1.4em;
+            }
+
+            .section-content {
+                font-size: 1.1em;
+            }
+
+            .excel-table {
+                font-size: 1em;
+            }
+
+            .excel-table th, .excel-table td {
+                padding: 12px;
+            }
+
+            .step {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+
+            .back-button {
+                padding: 10px 20px;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-button">
+            <i class="fas fa-arrow-right"></i> العودة للصفحة الرئيسية
+        </a>
+        <h1>نظام GPS اللحظي الدقيق (RTK GPS)</h1>
+
+        <div class="section">
+            <h2 class="section-title">🟨 أولاً: ما هو RTK GPS؟</h2>
+            <div class="section-content">
+                <p>RTK هو اختصار لـ Real-Time Kinematic، وهي تقنية متقدمة تُستخدم مع أجهزة GPS المساحية للحصول على إحداثيات دقيقة تصل إلى المليمتر في الزمن الحقيقي.</p>
+                <p>الفرق الأساسي بين GPS العادي وRTK هو:</p>
+                <p>RTK يستخدم محطة مرجعية (Base Station) لإرسال تصحيحات فورية لجهاز الاستقبال (Rover)، مما يقلل الأخطاء الناتجة عن الأقمار الصناعية والغلاف الجوي.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🟦 ثانيًا: مكونات نظام RTK GPS</h2>
+            <table class="excel-table">
+                <thead>
+                    <tr>
+                        <th>المكون</th>
+                        <th>الوصف</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>جهاز الاستقبال (Rover)</td>
+                        <td>يُحمل على الشاخص، ويقيس الموقع في الموقع المراد رفعه</td>
+                    </tr>
+                    <tr>
+                        <td>محطة القاعدة (Base Station)</td>
+                        <td>تُثبّت في نقطة معلومة وتبث إشارات تصحيح لحظية لـ Rover عبر الراديو أو الإنترنت</td>
+                    </tr>
+                    <tr>
+                        <td>هوائي GPS</td>
+                        <td>للحصول على أفضل استقبال للإشارات من الأقمار</td>
+                    </tr>
+                    <tr>
+                        <td>جهاز اتصال (مودم – راديو)</td>
+                        <td>لنقل التصحيحات بين Base وRover</td>
+                    </tr>
+                    <tr>
+                        <td>برنامج تشغيل أو جهاز تحكم (Controller)</td>
+                        <td>يُستخدم لعرض الإحداثيات وتخزينها في الوقت الحقيقي</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🟩 ثالثًا: كيفية عمل RTK GPS</h2>
+            <div class="section-content">
+                <ul>
+                    <li>Base Station تُوضع في نقطة معلومة الموقع (ثابتة)</li>
+                    <li>تقوم بقياس الإشارة من الأقمار ومقارنتها بالموقع المعروف</li>
+                    <li>ترسل تصحيحات الإشارة إلى Rover (المتحرك) كل ثانية تقريبًا</li>
+                    <li>جهاز Rover يعدّل موقعه باستخدام هذه التصحيحات ويعرض الموقع بدقة عالية جدًا</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🛠️ رابعًا: خطوات استخدام RTK GPS عمليًا</h2>
+            <div class="steps">
+                <div class="step">
+                    <h3>1. إعداد المحطة الأساسية:</h3>
+                    <ul>
+                        <li>حدد نقطة ثابتة (غالبًا نقطة معلوم إحداثياتها)</li>
+                        <li>شغّل الجهاز وحددها كـ Base</li>
+                        <li>فعّل البث (راديو – شبكة إنترنت – Bluetooth حسب النظام)</li>
+                    </ul>
+                </div>
+                <div class="step">
+                    <h3>2. إعداد الجهاز المتحرك (Rover):</h3>
+                    <ul>
+                        <li>ثبت الجهاز على الشاخص أو الحامل</li>
+                        <li>فعّل الاتصال مع الـ Base (يدويًا أو تلقائيًا)</li>
+                        <li>تأكد من ظهور كلمة Fix أو RTK Float/RTK Fixed</li>
+                    </ul>
+                </div>
+                <div class="step">
+                    <h3>3. جمع البيانات:</h3>
+                    <ul>
+                        <li>قف على النقطة المطلوبة</li>
+                        <li>انتظر حتى تستقر الإشارة (PDOP جيد، Fix OK)</li>
+                        <li>احفظ النقطة بالإحداثيات (X, Y, Z)</li>
+                    </ul>
+                </div>
+                <div class="step">
+                    <h3>4. توقيع النقاط:</h3>
+                    <ul>
+                        <li>أدخل النقاط التي تريد توقيعها</li>
+                        <li>الجهاز يرشدك في أي اتجاه تتحرك والمسافة للنقطة المطلوبة</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">📚 خامسًا: أهم المصطلحات</h2>
+            <table class="excel-table">
+                <thead>
+                    <tr>
+                        <th>المصطلح</th>
+                        <th>الشرح</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>RTK Fixed</td>
+                        <td>أعلى دقة – تصحيح لحظي ومستقر – دقة من 0.5 إلى 2 سم</td>
+                    </tr>
+                    <tr>
+                        <td>RTK Float</td>
+                        <td>تصحيح غير ثابت تمامًا – دقة أقل من Fixed – (من 5 إلى 30 سم تقريبًا)</td>
+                    </tr>
+                    <tr>
+                        <td>Base Station</td>
+                        <td>محطة بث التصحيحات</td>
+                    </tr>
+                    <tr>
+                        <td>Rover</td>
+                        <td>الجهاز المتنقل الذي يقيس النقاط</td>
+                    </tr>
+                    <tr>
+                        <td>Correction Signal</td>
+                        <td>الإشارة المُعدّلة القادمة من الـBase</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🔍 سادسًا: دقة RTK</h2>
+            <table class="excel-table">
+                <thead>
+                    <tr>
+                        <th>النوع</th>
+                        <th>الدقة التقريبية</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>RTK Fixed</td>
+                        <td>±0.5 إلى ±2 سم</td>
+                    </tr>
+                    <tr>
+                        <td>RTK Float</td>
+                        <td>±5 إلى ±30 سم</td>
+                    </tr>
+                    <tr>
+                        <td>GPS عادي</td>
+                        <td>±1 إلى ±10 متر</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🟥 سابعًا: المميزات والعيوب</h2>
+            <div class="section-content">
+                <h3>✅ المميزات:</h3>
+                <ul>
+                    <li>دقة عالية جدًا (مليمترية)</li>
+                    <li>فورية بدون معالجة لاحقة</li>
+                    <li>مفيد جدًا في أعمال التوقيع الدقيقة</li>
+                    <li>قابل للربط مع Total Station وGIS</li>
+                </ul>
+                <h3>❌ العيوب:</h3>
+                <ul>
+                    <li>يتطلب وجود تغطية إشارة تصحيح (راديو أو شبكة)</li>
+                    <li>قد يتأثر بانقطاع الاتصال</li>
+                    <li>مكلف مقارنةً بـ GPS العادي</li>
+                    <li>إعداداته أعقد وتحتاج معرفة تقنية جيدة</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">✅ ثامنًا: جدول التلخيص الشامل – RTK GPS</h2>
+            <table class="excel-table">
+                <thead>
+                    <tr>
+                        <th>البند</th>
+                        <th>التفاصيل</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>الوظيفة</td>
+                        <td>تحديد المواقع بدقة عالية لحظيًا عبر إشارات تصحيح من محطة مرجعية</td>
+                    </tr>
+                    <tr>
+                        <td>الدقة</td>
+                        <td>±1 إلى ±2 سم (Fixed) – ±10 إلى ±30 سم (Float)</td>
+                    </tr>
+                    <tr>
+                        <td>الاستخدامات</td>
+                        <td>التوقيع – رفع دقيق – إنشاء – مساحات – طرق – مشاريع كبيرة</td>
+                    </tr>
+                    <tr>
+                        <td>المكونات</td>
+                        <td>Base + Rover + هوائيات + اتصال + شاشة/برنامج</td>
+                    </tr>
+                    <tr>
+                        <td>أهم المصطلحات</td>
+                        <td>Fix – Float – Base Station – Correction – Rover</td>
+                    </tr>
+                    <tr>
+                        <td>الخطوات</td>
+                        <td>إعداد Base → ربط Rover → استقبال التصحيحات → قياس أو توقيع</td>
+                    </tr>
+                    <tr>
+                        <td>المميزات</td>
+                        <td>دقة مليمترية – لحظية – مثالي للمشاريع الهندسية</td>
+                    </tr>
+                    <tr>
+                        <td>العيوب</td>
+                        <td>مكلف – يحتاج تغطية – إعدادات متقدمة</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html> 
