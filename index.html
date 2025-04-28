@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+      <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MapMetric</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #202124;
+            --card-bg: #303134;
+            --text: #ffffff;
+            --primary: #4834d4;
+            --secondary: #6c5ce7;
+            --accent: #00cec9;
+        }
+
+        /* General Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--text);
+            overflow-x: hidden;
+            height: 100vh;
+            position: relative;
+            background: var(--bg-dark);
+            background-attachment: fixed;
+        }
+
+        body::before {
+            display: none;
+        }
+
+        body::after {
+            display: none;
+        }
+
+        @keyframes subtleFloat {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .menu-icon {
+            font-size: 24px;
+            color: #fff;
+            cursor: pointer;
+            margin-right: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-icon:hover {
+            color: #4834d4;
+            transform: scale(1.1);
+        }
+
+        header h1 {
+            flex: 1;
+            font-size: 24px;
+            color: var(--text);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        header h1 span {
+            background: linear-gradient(135deg, var(--accent), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 300px;
+            height: 100%;
+            background: var(--bg-dark);
+            transition: left 0.3s ease-in-out;
+            padding-top: 20px;
+            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            overflow-y: auto;
+        }
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        .sidebar h2 {
+            color: var(--text);
+            font-size: 1.2rem;
+            padding: 0 20px;
+            margin-bottom: 15px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, var(--accent), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* App Icon in Sidebar */
+        .app-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 0 20px;
+        }
+
+        .app-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(72, 52, 212, 0.3);
+        }
+
+        .icon-grid {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            padding: 6px;
+            gap: 3px;
+        }
+
+        .icon-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        .education-section { background: rgba(255, 255, 255, 0.15); }
+        .tools-section { background: rgba(255, 255, 255, 0.12); }
+        .measure-section { background: rgba(255, 255, 255, 0.1); }
+        .total-station-section { background: rgba(255, 255, 255, 0.08); }
+
+        .app-brand h2 {
+            margin: 0;
+            padding: 0;
+            font-size: 1.75rem;
+            color: var(--text);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .app-brand h2 span {
+            background: linear-gradient(135deg, #00cec9, #6c5ce7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .sidebar .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin: 5px 10px;
+            border-radius: 8px;
+        }
+
+        .sidebar .section-header:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar .section-header .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .sidebar .section-header .section-title i {
+            font-size: 18px;
+            color: var(--accent);
+        }
+
+        .sidebar .section-header .arrow {
+            color: var(--accent);
+            transition: transform 0.2s ease;
+        }
+
+        .sidebar .section-header .arrow.rotate {
+            transform: rotate(180deg);
+        }
+
+        .sidebar .section-content {
+            display: none;
+            padding: 0 15px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar .section-content.show {
+            display: block;
+        }
+
+        .sidebar .chapter-item {
+            padding: 10px 15px;
+            margin: 5px 0;
+            color: rgba(255, 255, 255, 0.9);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar .chapter-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--accent);
+        }
+
+        .sidebar .chapter-item i {
+            font-size: 16px;
+            color: var(--accent);
+        }
+
+        .sidebar .chapter-item.active {
+            background: rgba(0, 206, 201, 0.1);
+            color: var(--accent);
+        }
+
+        /* Main Content */
+        main {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            text-align: left;
+            height: calc(100vh - 140px);
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .content-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 800px;
+            display: none;
+            backdrop-filter: blur(5px);
+        }
+
+        .content-container.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .content-container h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .content-container h3 {
+            font-size: 20px;
+            color: #444;
+            margin: 20px 0 10px;
+        }
+
+        .content-container p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .content-container ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .content-container li {
+            margin-bottom: 8px;
+            color: #666;
+        }
+
+        .content-container img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin: 15px 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .no-projects {
+            padding: 40px;
+            border-radius: 10px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: subtleFloat 6s ease-in-out infinite;
+        }
+
+        .no-projects p:first-child {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #00ff87, #60efff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .no-projects p {
+            color: #fff;
+            margin-top: 10px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Footer */
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-button, .create-button {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            text-align: center;
+            flex: 1;
+            transition: all 0.3s;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin: 0 4px;
+        }
+
+        .create-button {
+            background: linear-gradient(45deg, #00ff87, #60efff);
+            color: #1a1a1a;
+            margin: 0 10px;
+            border: none;
+            font-weight: 500;
+        }
+
+        .nav-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .create-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 255, 135, 0.3);
+        }
+
+        .nav-button i, .create-button i {
+            font-size: 1rem;
+            transition: transform 0.3s;
+        }
+
+        .nav-button:hover i, .create-button:hover i {
+            transform: scale(1.1);
+        }
+
+        .tools-button {
+            background: #4834d4;
+            color: #fff;
+            border: none;
+            font-weight: 500;
+        }
+
+        .tools-button:hover {
+            background: #3a2ba8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(72, 52, 212, 0.3);
+        }
+
+        /* Settings Panel */
+        .settings-panel {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            min-width: 350px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .settings-panel h2 {
+            margin-bottom: 25px;
+            color: #fff;
+            font-size: 24px;
+            text-align: center;
+            background: linear-gradient(45deg, #00ff87, #60efff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .settings-group {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .settings-group h3 {
+            color: #00ff87;
+            font-size: 16px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .settings-group h3 i {
+            font-size: 18px;
+        }
+
+        .settings-panel label {
+            display: block;
+            margin-bottom: 8px;
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .settings-panel select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            font-size: 16px;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .settings-panel select option {
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        .settings-panel .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .settings-panel .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .settings-panel .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .settings-panel button {
+            background: linear-gradient(45deg, #00ff87, #60efff);
+            color: #1a1a1a;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .settings-panel button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 255, 135, 0.3);
+        }
+
+        .settings-panel .close-button {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px;
+            width: auto;
+        }
+
+        .settings-panel .close-button:hover {
+            color: #00ff87;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Active State */
+        .active {
+            background: rgba(0, 255, 135, 0.1);
+            border-left: 2px solid #00ff87;
+            color: #00ff87;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Scrollbar Styling */
+        .sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #4834d4;
+            border-radius: 4px;
+        }
+
+        /* Menu Footer */
+        .menu-footer {
+            margin-top: auto;
+            padding: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .login-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            background: rgba(0, 206, 201, 0.1);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+
+        .login-button:hover {
+            background: rgba(0, 206, 201, 0.2);
+        }
+
+        .login-button i {
+            font-size: 16px;
+            color: var(--accent);
+        }
+
+        .login-button span {
+            font-weight: 500;
+        }
+
+        /* Divider styling */
+        .sidebar-divider {
+            height: 1px;
+            background: var(--accent);
+            margin: 10px 15px;
+        }
+
+        /* Add styles for MapMetric name */
+        .app-title {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .app-title .map-part {
+            color: #ffffff;
+        }
+
+        .app-title .metric-part {
+            color: #4834d4;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="app-brand">
+            <div class="app-icon">
+                <div class="icon-grid">
+                    <div class="icon-section education-section">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="icon-section tools-section">
+                        <i class="fas fa-ruler-combined"></i>
+                    </div>
+                    <div class="icon-section measure-section">
+                        <i class="fas fa-drafting-compass"></i>
+                    </div>
+                    <div class="icon-section total-station-section">
+                        <i class="fas fa-broadcast-tower"></i>
+                    </div>
+                </div>
+            </div>
+            <h2>Map<span>Metric</span></h2>
+        </div>
+        
+        <!-- Theoretical Section -->
+        <div class="section-header" onclick="toggleSection('theoretical')">
+                <div class="section-title">
+                <i class="fas fa-book"></i>
+                <span>Theoretical</span>
+                </div>
+            <i class="fas fa-chevron-down arrow" id="arrow-theoretical"></i>
+        </div>
+        <div class="section-content" id="theoretical">
+            <div class="chapter-item" onclick="showContent('chapter1')">
+                <i class="fas fa-file-alt"></i>
+                <span>Chapter One</span>
+            </div>
+            <div class="chapter-item" onclick="showContent('chapter2')">
+                <i class="fas fa-file-alt"></i>
+                <span>Chapter Two</span>
+            </div>
+            <div class="chapter-item" onclick="showContent('chapter3')">
+                <i class="fas fa-file-alt"></i>
+                <span>Chapter Three</span>
+            </div>
+            <div class="chapter-item" onclick="showContent('chapter4')">
+                <i class="fas fa-file-alt"></i>
+                <span>Chapter Four</span>
+            </div>
+            <div class="chapter-item" onclick="showContent('chapter5')">
+                <i class="fas fa-file-alt"></i>
+                <span>Chapter Five</span>
+            </div>
+            <div class="chapter-item" onclick="showContent('chapter6')">
+                <i class="fas fa-file-alt"></i>
+                <span>Chapter Six</span>
+            </div>
+            <div class="chapter-item" onclick="showContent('chapter7')">
+                <i class="fas fa-file-alt"></i>
+                <span>Chapter Seven</span>
+            </div>
+            <div class="chapter-item" onclick="showContent('chapter8')">
+                <i class="fas fa-file-alt"></i>
+                <span>Chapter Eight</span>
+            </div>
+            <div class="chapter-item" onclick="showContent('chapter9')">
+                <i class="fas fa-file-alt"></i>
+                <span>Chapter Nine</span>
+            </div>
+            <div class="chapter-item" onclick="showContent('chapter10')">
+                <i class="fas fa-file-alt"></i>
+                <span>Chapter Ten</span>
+            </div>
+        </div>
+
+        <!-- Hardware/Practical Section -->
+        <div class="section-header" onclick="toggleSection('hardware')">
+                <div class="section-title">
+                <i class="fas fa-tools"></i>
+                <span>Hardware/Practical</span>
+            </div>
+            <i class="fas fa-chevron-down arrow" id="arrow-hardware"></i>
+        </div>
+        <div class="section-content" id="hardware">
+            <div class="chapter-item" onclick="showContent('total-station')">
+                    <i class="fas fa-compass"></i>
+                <span>Total Station</span>
+                </div>
+            <div class="chapter-item" onclick="showContent('theodolite')">
+                <i class="fas fa-compass"></i>
+                <span>Theodolite</span>
+                </div>
+            <div class="chapter-item" onclick="showContent('level')">
+                <i class="fas fa-ruler-vertical"></i>
+                <span>Level</span>
+                </div>
+            <div class="chapter-item" onclick="showContent('gps')">
+                <i class="fas fa-satellite"></i>
+                <span>GPS</span>
+            </div>
+            <div class="chapter-item" onclick="showContent('rtk-gps')">
+                <i class="fas fa-satellite-dish"></i>
+                <span>RTK GPS</span>
+            </div>
+            <div class="chapter-item" onclick="showContent('drone')">
+                <i class="fas fa-drone-alt"></i>
+                <span>Drone (UAV)</span>
+            </div>
+            <div class="chapter-item" onclick="showContent('laser-scanner')">
+                <i class="fas fa-laser"></i>
+                <span>Laser Scanner (LiDAR)</span>
+            </div>
+            <div class="chapter-item" onclick="showContent('tacheometer')">
+                <i class="fas fa-ruler-combined"></i>
+                <span>Tacheometer</span>
+            </div>
+            <div class="chapter-item" onclick="showContent('handheld-gps')">
+                <i class="fas fa-mobile-alt"></i>
+                <span>Handheld GPS Receiver</span>
+            </div>
+            <div class="chapter-item" onclick="showContent('measuring-tape')">
+                <i class="fas fa-ruler"></i>
+                <span>Measuring Tape</span>
+            </div>
+            <div class="chapter-item" onclick="showContent('prism')">
+                <i class="fas fa-cube"></i>
+                <span>Prism and Prism Pole</span>
+            </div>
+            <div class="chapter-item" onclick="showContent('tripod')">
+                    <i class="fas fa-camera"></i>
+                <span>Tripod</span>
+                </div>
+            <div class="chapter-item" onclick="showContent('plumb-bob')">
+                <i class="fas fa-weight"></i>
+                <span>Plumb Bob</span>
+                </div>
+            <div class="chapter-item" onclick="showContent('compass')">
+                <i class="fas fa-compass"></i>
+                <span>Compass</span>
+                </div>
+            <div class="chapter-item" onclick="showContent('range-finder')">
+                <i class="fas fa-bullseye"></i>
+                <span>Range Finder</span>
+            </div>
+            <div class="chapter-item" onclick="showContent('clinometer')">
+                <i class="fas fa-angle-double-up"></i>
+                <span>Clinometer</span>
+            </div>
+            <div class="chapter-item" onclick="showContent('altimeter')">
+                <i class="fas fa-mountain"></i>
+                <span>Altimeter</span>
+            </div>
+            <div class="chapter-item" onclick="showContent('plane-table')">
+                <i class="fas fa-table"></i>
+                <span>Plane Table</span>
+            </div>
+            <div class="chapter-item" onclick="showContent('surveyors-chain')">
+                <i class="fas fa-link"></i>
+                <span>Surveyor's Chain</span>
+            </div>
+            <div class="chapter-item" onclick="showContent('staff')">
+                <i class="fas fa-ruler-vertical"></i>
+                <span>Staff</span>
+            </div>
+            <div class="chapter-item" onclick="showContent('data-collector')">
+                <i class="fas fa-tablet-alt"></i>
+                <span>Data Collector</span>
+            </div>
+            <div class="chapter-item" onclick="showContent('abney-level')">
+                <i class="fas fa-ruler-combined"></i>
+                <span>Abney Level</span>
+            </div>
+            <div class="chapter-item" onclick="showContent('pantograph')">
+                <i class="fas fa-draw-polygon"></i>
+                <span>Pantograph</span>
+            </div>
+            
+            <!-- New Map Features Section -->
+            <div class="chapter-item" onclick="showContent('map')">
+                <i class="fas fa-map"></i>
+                <span>Map</span>
+            </div>
+            <div class="chapter-item" onclick="showContent('my-places')">
+                <i class="fas fa-bookmark"></i>
+                <span>My Places</span>
+            </div>
+            <div class="chapter-item" onclick="showContent('compass-tool')">
+                <i class="fas fa-compass"></i>
+                <span>Compass</span>
+            </div>
+            <div class="chapter-item" onclick="showContent('elevation')">
+                <i class="fas fa-mountain"></i>
+                <span>Elevation</span>
+            </div>
+            <div class="chapter-item" onclick="showContent('remove-ads')">
+                <i class="fas fa-ban"></i>
+                <span>Remove Ads</span>
+            </div>
+            <div class="chapter-item" onclick="showContent('rate-us')">
+                <i class="fas fa-star"></i>
+                <span>Rate Us</span>
+            </div>
+            <div class="chapter-item" onclick="showContent('settings')">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </div>
+        </div>
+
+        <div class="sidebar-divider"></div>
+
+        <!-- Map Features -->
+        <div class="section-header" onclick="toggleSection('map')">
+            <div class="section-title">
+                <i class="fas fa-map"></i>
+                <span>Map</span>
+            </div>
+        </div>
+
+        <!-- My Places -->
+        <div class="section-header" onclick="toggleSection('my-places')">
+            <div class="section-title">
+                <i class="fas fa-bookmark"></i>
+                <span>My Places</span>
+            </div>
+        </div>
+
+        <!-- Compass -->
+        <div class="section-header" onclick="toggleSection('compass-nav')">
+            <div class="section-title">
+                <i class="fas fa-compass"></i>
+                <span>Compass</span>
+            </div>
+        </div>
+
+        <!-- Elevation -->
+        <div class="section-header" onclick="toggleSection('elevation')">
+            <div class="section-title">
+                <i class="fas fa-mountain"></i>
+                <span>Elevation</span>
+            </div>
+        </div>
+
+        <!-- Remove Ads -->
+        <div class="section-header" onclick="toggleSection('remove-ads')">
+            <div class="section-title">
+                <i class="fas fa-ban"></i>
+                <span>Remove Ads</span>
+            </div>
+        </div>
+
+        <!-- Rate Us -->
+        <div class="section-header" onclick="toggleSection('rate-us')">
+            <div class="section-title">
+                <i class="fas fa-star"></i>
+                <span>Rate Us</span>
+            </div>
+        </div>
+
+        <!-- Settings -->
+        <div class="section-header" onclick="toggleSection('settings')">
+            <div class="section-title">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </div>
+        </div>
+
+        <!-- Menu Footer -->
+        <div class="menu-footer">
+            <div class="login-button" onclick="redirectToLogin()">
+                <i class="fas fa-sign-in-alt"></i>
+                <span>Login</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="main-content">
+        <header>
+            <div class="menu-icon" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+            <h1>Map<span>Metric</span></h1>
+        </header>
+
+        <main>
+            <div class="content-container" id="welcome-content">
+                <p>Welcome to MapMetric</p>
+                <p>Select a topic from the sidebar to begin exploring surveying and mapping technologies.</p>
+            </div>
+
+            <!-- Coming Soon Message -->
+            <div class="content-container" id="coming-soon">
+                <div class="no-projects">
+                    <p>Coming Soon</p>
+                    <p>This chapter is currently under development. Please check back later!</p>
+                </div>
+            </div>
+
+            <!-- Surveying Instruments Content -->
+            <div class="content-container" id="theodolite">
+                <h2>Theodolite</h2>
+                <p>A theodolite is a precision instrument used for measuring angles in the horizontal and vertical planes. It is a key tool in surveying and engineering applications, particularly for establishing straight lines and measuring angles between points.</p>
+                
+                <h3>Key Features</h3>
+                <ul>
+                    <li>Precise angle measurement</li>
+                    <li>Horizontal and vertical circle readings</li>
+                    <li>Optical or digital display</li>
+                    <li>Leveling capabilities</li>
+                </ul>
+                
+                <h3>Applications</h3>
+                <p>Theodolites are used in various applications including:</p>
+                <ul>
+                    <li>Construction layout</li>
+                    <li>Traverse surveys</li>
+                    <li>Triangulation</li>
+                    <li>Astronomical observations</li>
+                    <li>Precision alignment</li>
+                </ul>
+            </div>
+
+            <div class="content-container" id="theodolite-setup">
+                <h2>Theodolite Setup & Operation</h2>
+                <p>Proper setup and operation of a theodolite is crucial for accurate measurements. This section covers the essential steps and best practices.</p>
+                
+                <h3>Setup Procedure</h3>
+                <ul>
+                    <li>Level the tripod</li>
+                    <li>Mount the theodolite</li>
+                    <li>Center the instrument over the point</li>
+                    <li>Level the instrument</li>
+                    <li>Focus the telescope</li>
+                </ul>
+                
+                <h3>Operation Steps</h3>
+                <ul>
+                    <li>Set up the instrument</li>
+                    <li>Take backsight readings</li>
+                    <li>Measure angles</li>
+                    <li>Record measurements</li>
+                    <li>Check for errors</li>
+                </ul>
+            </div>
+
+            <div class="content-container" id="theodolite-calculations">
+                <h2>Theodolite Calculations</h2>
+                <p>This section covers the various calculations that can be performed using a theodolite.</p>
+                
+                <h3>Common Calculations</h3>
+                <ul>
+                    <li>Horizontal angles</li>
+                    <li>Vertical angles</li>
+                    <li>Slope distances</li>
+                    <li>Coordinate calculations</li>
+                    <li>Traverse calculations</li>
+                </ul>
+                
+                <h3>Error Correction</h3>
+                <ul>
+                    <li>Instrument errors</li>
+                    <li>Environmental errors</li>
+                    <li>Operator errors</li>
+                    <li>Correction methods</li>
+                </ul>
+            </div>
+
+            <div class="content-container" id="total-station">
+                <h2>Total Station</h2>
+                <p>A total station is an electronic/optical instrument used in modern surveying and building construction. It combines the functions of a theodolite (for measuring angles) and an electronic distance meter (EDM) to measure distances, making it a versatile tool for surveying and construction layout.</p>
+                
+                <h3>Key Features</h3>
+                <ul>
+                    <li>Electronic distance measurement (EDM)</li>
+                    <li>Angle measurement (horizontal and vertical)</li>
+                    <li>Coordinate calculation</li>
+                    <li>Data storage and transfer capabilities</li>
+                    <li>Robotic operation (in some models)</li>
+                </ul>
+                
+                <h3>Applications</h3>
+                <p>Total stations are used in various applications including:</p>
+                <ul>
+                    <li>Construction layout and surveying</li>
+                    <li>Topographic mapping</li>
+                    <li>As-built surveys</li>
+                    <li>Deformation monitoring</li>
+                    <li>Industrial measurement</li>
+                </ul>
+            </div>
+
+            <div class="content-container" id="total-station-components">
+                <h2>Total Station Components</h2>
+                <p>The total station consists of several key components that work together to provide accurate measurements:</p>
+                
+                <h3>Main Components</h3>
+                <ul>
+                    <li><strong>Telescope:</strong> Used for sighting targets and measuring angles</li>
+                    <li><strong>Angle Measurement System:</strong> Measures horizontal and vertical angles</li>
+                    <li><strong>Distance Measurement System (EDM):</strong> Measures distances using electronic methods</li>
+                    <li><strong>Control Panel:</strong> Allows the operator to input data and control the instrument</li>
+                    <li><strong>Battery:</strong> Powers the electronic components</li>
+                    <li><strong>Leveling System:</strong> Ensures the instrument is properly leveled</li>
+                    <li><strong>Data Storage:</strong> Stores measurements and calculations</li>
+                </ul>
+                
+                <h3>Accessories</h3>
+                <ul>
+                    <li><strong>Prism:</strong> Reflects the EDM signal for distance measurement</li>
+                    <li><strong>Tripod:</strong> Provides a stable platform for the instrument</li>
+                    <li><strong>Data Collector:</strong> External device for data storage and processing</li>
+                    <li><strong>Targeting System:</strong> Helps in precise targeting of points</li>
+                </ul>
+            </div>
+
+            <div class="content-container" id="total-station-operation">
+                <h2>Total Station Operation Guide</h2>
+                <p>This section provides a comprehensive guide to operating a total station effectively.</p>
+                
+                <h3>Setup Procedure</h3>
+                <ul>
+                    <li>Set up the tripod</li>
+                    <li>Mount the total station</li>
+                    <li>Level the instrument</li>
+                    <li>Initialize the instrument</li>
+                    <li>Set up the coordinate system</li>
+                </ul>
+                
+                <h3>Measurement Procedures</h3>
+                <ul>
+                    <li>Point measurement</li>
+                    <li>Distance measurement</li>
+                    <li>Angle measurement</li>
+                    <li>Coordinate measurement</li>
+                    <li>Topographic survey</li>
+                </ul>
+            </div>
+
+            <div class="content-container" id="total-station-calibration">
+                <h2>Total Station Calibration</h2>
+                <p>Regular calibration is essential to maintain the accuracy of a total station.</p>
+                
+                <h3>Calibration Procedures</h3>
+                <ul>
+                    <li>Electronic distance measurement calibration</li>
+                    <li>Angle measurement calibration</li>
+                    <li>Level calibration</li>
+                    <li>Prism constant calibration</li>
+                    <li>Atmospheric correction calibration</li>
+                </ul>
+                
+                <h3>Maintenance</h3>
+                <ul>
+                    <li>Regular cleaning</li>
+                    <li>Battery maintenance</li>
+                    <li>Storage conditions</li>
+                    <li>Transportation precautions</li>
+                </ul>
+            </div>
+
+            <div class="content-container" id="total-station-troubleshooting">
+                <h2>Total Station Troubleshooting</h2>
+                <p>This section covers common issues that may arise when using a total station and how to resolve them.</p>
+                
+                <h3>Common Issues</h3>
+                <ul>
+                    <li>Power problems</li>
+                    <li>Measurement errors</li>
+                    <li>Display issues</li>
+                    <li>Communication problems</li>
+                    <li>Environmental factors</li>
+                </ul>
+                
+                <h3>Solutions</h3>
+                <ul>
+                    <li>Battery replacement</li>
+                    <li>Calibration checks</li>
+                    <li>Software updates</li>
+                    <li>Environmental adjustments</li>
+                    <li>Professional service</li>
+                </ul>
+            </div>
+
+            <!-- Add more content containers for other topics -->
+        </main>
+
+        <footer>
+            <a href="terms.html" class="nav-button"><i class="fas fa-file-pdf"></i> PDF</a>
+            <a href="calculations.html" class="nav-button tools-button"><i class="fas fa-tools"></i> Tools</a>
+            <a href="project.html" class="nav-button"><i class="fas fa-book"></i> Learning</a>
+        </footer>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            sidebar.classList.toggle("open");
+        }
+
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            const arrow = document.getElementById('arrow-' + sectionId);
+            
+            // Toggle the show class
+            if (section.style.display === 'none' || section.style.display === '') {
+                section.style.display = 'block';
+                arrow.classList.add('rotate');
+            } else {
+                section.style.display = 'none';
+                arrow.classList.remove('rotate');
+            }
+        }
+
+        function showContent(contentId) {
+            // Hide welcome content
+            document.getElementById('welcome-content').style.display = 'none';
+            
+            // Hide all content containers
+            const contentContainers = document.querySelectorAll('.content-container');
+            contentContainers.forEach(container => {
+                container.style.display = 'none';
+            });
+
+            // Special handling for chapters
+            if (contentId === 'chapter1') {
+                window.location.href = 'Chapter_1.html';
+                return;
+            }
+            if (contentId === 'chapter2') {
+                window.location.href = 'Chapter_2.html';
+                return;
+            }
+            if (contentId === 'chapter3') {
+                window.location.href = 'Chapter_3.html';
+                return;
+            }
+            if (contentId === 'chapter4') {
+                window.location.href = 'Chapter_4.html';
+                return;
+            }
+            if (contentId === 'chapter5') {
+                window.location.href = 'Chapter_5.html';
+                return;
+            }
+            // Show coming soon message for chapters 6-10
+            if (['chapter6', 'chapter7', 'chapter8', 'chapter9', 'chapter10'].includes(contentId)) {
+                const comingSoon = document.getElementById('coming-soon');
+                comingSoon.style.display = 'block';
+                comingSoon.classList.add('active');
+                return;
+            }
+
+            // Handle tool redirects
+            const toolRedirects = {
+                'total-station': 'tools/total-station.html',
+                'theodolite': 'tools/theodolite.html',
+                'level': 'tools/level.html',
+                'gps': 'tools/gps.html',
+                'rtk-gps': 'tools/rtk-gps.html',
+                'drone': 'tools/drone.html',
+                'laser-scanner': 'tools/laser-scanner.html',
+                'tacheometer': 'tools/tacheometer.html',
+                'handheld-gps': 'tools/handheld-gps.html',
+                'measuring-tape': 'tools/measuring-tape.html',
+                'prism': 'tools/prism.html',
+                'tripod': 'tools/tripod.html',
+                'plumb-bob': 'tools/plumb-bob.html',
+                'compass': 'tools/compass.html',
+                'range-finder': 'tools/range-finder.html',
+                'clinometer': 'tools/clinometer.html',
+                'altimeter': 'tools/altimeter.html',
+                'plane-table': 'tools/plane-table.html',
+                'surveyors-chain': 'tools/surveyors-chain.html',
+                'staff': 'tools/staff.html',
+                'data-collector': 'tools/data-collector.html',
+                'abney-level': 'tools/abney-level.html',
+                'pantograph': 'tools/pantograph.html',
+                'map': 'tools/map.html',
+                'my-places': 'tools/my-places.html',
+                'compass-tool': 'tools/compass-tool.html',
+                'elevation': 'tools/elevation.html',
+                'remove-ads': 'tools/remove-ads.html',
+                'rate-us': 'tools/rate-us.html',
+                'settings': 'tools/settings.html'
+            };
+
+            if (toolRedirects[contentId]) {
+                window.location.href = toolRedirects[contentId];
+                return;
+            }
+
+            // Show the selected content container if it's not a chapter or tool
+            const selectedContent = document.getElementById(contentId);
+            if (selectedContent) {
+                selectedContent.style.display = 'block';
+                selectedContent.classList.add('active');
+            }
+
+            // Update active state in sidebar
+            const chapterItems = document.querySelectorAll('.chapter-item');
+            chapterItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('onclick').includes(contentId)) {
+                    item.classList.add('active');
+                }
+            });
+        }
+
+        // Touch events for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.body.addEventListener("touchstart", (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.body.addEventListener("touchend", (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+
+            if (touchEndX - touchStartX > 50) {
+                document.getElementById("sidebar").classList.add("open");
+            } else if (touchStartX - touchEndX > 50) {
+                document.getElementById("sidebar").classList.remove("open");
+            }
+        });
+
+        // Close sidebar when clicking outside
+        document.addEventListener('click', (e) => {
+            const sidebar = document.getElementById('sidebar');
+            const menuIcon = document.querySelector('.menu-icon');
+            
+            if (!sidebar.contains(e.target) && !menuIcon.contains(e.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        // Initialize the sidebar
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initially hide all sections
+            const sections = document.querySelectorAll('.section-content');
+            sections.forEach(section => {
+                section.style.display = 'none';
+            });
+
+            // Set initial arrow directions
+            const arrows = document.querySelectorAll('.arrow');
+            arrows.forEach(arrow => {
+                arrow.classList.remove('rotate');
+            });
+        });
+
+        function changeLanguage(lang) {
+            // Here you would implement language change logic
+            console.log("Language changed to:", lang);
+        }
+
+        function redirectToLogin() {
+            window.location.href = 'home.html';
+        }
+    </script>
+</body>
+</html>
